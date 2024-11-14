@@ -1,0 +1,6 @@
+fastapi
+uvicorn
+sqlalchemy
+psycopg2-binary  # Driver para PostgreSQL
+pydantic
+alembic  # Migraciones para SQLAlchemy
