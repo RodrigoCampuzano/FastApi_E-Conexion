@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from app.db.dependencies import get_db
 from app.models.Foro import Foro
 from app.schemas.foro import ForoCreate, ForoResponse, ForoUpdate, ForoResponseUpdate
+from typing import List
 
 router = APIRouter()
 
@@ -45,3 +46,12 @@ def update_foro(foro_id: int, foro_update: ForoUpdate, db: Session = Depends(get
     foro.descripcion = foro_update.descripcion
     db.refresh(foro)
     return foro
+
+
+
+@router.get("/", response_model=List[ForoResponse])
+def read_all_chats(db: Session = Depends(get_db)):
+    chats = db.query(Foro).all()
+    if not chats:
+        raise HTTPException(status_code=404, detail="No chats found")
+    return chats

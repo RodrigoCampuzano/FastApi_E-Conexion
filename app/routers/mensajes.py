@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from app.db.dependencies import get_db
 from app.models.Mensajes import Mensajes
 from app.schemas.mensajes import MensajesCreate, MensajesResponse, MensajeUpdate, MensajesResponseUpdate
+from typing import List
 
 router = APIRouter()
 
@@ -45,3 +46,12 @@ def update_mensaje(mensaje_id: int, mensaje_update: MensajeUpdate, db: Session =
     db.commit()
     db.refresh(mensaje)
     return mensaje
+
+
+
+@router.get("/", response_model=List[MensajesResponse])
+def read_all_chats(db: Session = Depends(get_db)):
+    chats = db.query(Mensajes).all()
+    if not chats:
+        raise HTTPException(status_code=404, detail="No chats found")
+    return chats

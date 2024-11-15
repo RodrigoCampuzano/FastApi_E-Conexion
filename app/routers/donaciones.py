@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from app.db.dependencies import get_db
 from app.models.Donaciones import Donaciones 
 from app.schemas.donaciones import DonacionesCreate, DonacionesResponse, DonacionesUpdate, DonacionesResponseUpdate
+from typing import List
 
 router = APIRouter()
 
@@ -47,3 +48,10 @@ def update_donaciones(donaciones_id: int, donaciones_update: DonacionesUpdate, d
     donaciones.estatus=donaciones_update.estatus
     db.refresh(donaciones)
     return donaciones
+
+@router.get("/", response_model=List[DonacionesResponse])
+def read_all_chats(db: Session = Depends(get_db)):
+    chats = db.query(Donaciones).all()
+    if not chats:
+        raise HTTPException(status_code=404, detail="No chats found")
+    return chats

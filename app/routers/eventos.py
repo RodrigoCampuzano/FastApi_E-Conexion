@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from app.db.dependencies import get_db
 from app.models.Eventos import Eventos
 from app.schemas.eventos import EventoCreate, EventoResponse, EventoUpdate, EventoResponseUpdate
+from typing import List
 
 router = APIRouter()
 
@@ -78,3 +79,11 @@ def update_evento(evento_id: int, evento_update: EventoUpdate, db: Session = Dep
     db.commit()  # Asegúrate de hacer commit después de la actualización
     db.refresh(evento)  # Refrescar el objeto con los nuevos datos
     return evento
+
+
+@router.get("/", response_model=List[EventoResponse])
+def read_all_chats(db: Session = Depends(get_db)):
+    chats = db.query(Eventos).all()
+    if not chats:
+        raise HTTPException(status_code=404, detail="No chats found")
+    return chats

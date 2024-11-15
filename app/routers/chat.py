@@ -3,6 +3,8 @@ from sqlalchemy.orm import Session
 from app.db.dependencies import get_db
 from app.schemas.chat import ChatResponse, ChatCreate, ChatUpdate, ChatResponseUpdate
 from app.models.Chat import Chat 
+from typing import List
+
 
 router = APIRouter()
 
@@ -47,3 +49,10 @@ def update_evento(chat_id: int, chat_update: ChatUpdate, db: Session = Depends(g
     chat.id_chat_usuario=chat_update.id_chat_usuario
     db.refresh(chat)
     return chat
+
+@router.get("/", response_model=List[ChatResponse])
+def read_all_chats(db: Session = Depends(get_db)):
+    chats = db.query(Chat).all()
+    if not chats:
+        raise HTTPException(status_code=404, detail="No chats found")
+    return chats
