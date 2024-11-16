@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from app.db.dependencies import get_db
 from app.models.Publicaciones import Publicaciones
-from app.schemas.publicaciones import PublicacionesCreate, PublicacionesResponse, PublicacionesUpdate, PublicacionesResponseUpdate
+from app.models.Usuarios import Usuario
+from app.schemas.publicaciones import PublicacionesCreate, PublicacionesResponse, PublicacionesUpdate, PublicacionesResponseUpdate, PublicacionesResponseconUsuario
 from typing import List
 
 router = APIRouter()
@@ -52,9 +53,30 @@ def update_publicacion(publicacion_id: int, publicacion_update: PublicacionesUpd
     return publicacion
 
 
+from sqlalchemy.orm import joinedload
+
 @router.get("/", response_model=List[PublicacionesResponse])
 def read_all_chats(db: Session = Depends(get_db)):
-    chats = db.query(Publicaciones).all()
-    if not chats:
-        raise HTTPException(status_code=404, detail="No chats found")
-    return chats
+    publicaciones = (
+        db.query(Publicaciones)
+        .options(joinedload(Publicaciones.usuario))  # Cargar la relación
+        .all()
+    )
+
+    # Asegurar que cada publicación incluye el nombre del usuario
+    result = [
+        {
+            "id_publicaciones": pub.id_publicaciones,
+            "id_publicaciones_usuario": pub.id_publicaciones_usuario,
+            "imagen": pub.imagen,
+            "descripcion": pub.descripcion,
+            "fecha": pub.fecha,
+            "titulo": pub.titulo,
+            "nombre_usuario": pub.usuario.nombre_usuario if pub.usuario else None,
+        }
+        for pub in publicaciones
+    ]
+
+    if not publicaciones:
+        raise HTTPException(status_code=404, detail="No publicaciones encontradas")
+    return result

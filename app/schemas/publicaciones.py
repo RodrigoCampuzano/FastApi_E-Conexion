@@ -27,3 +27,10 @@ class PublicacionesResponseUpdate(PublicacionesUpdate):
     
     class Config:
         from_attributes = True
+        
+class PublicacionesResponseconUsuario(PublicacionesBase):
+    id_publicaciones: int
+    nombre_usuario: str
+    
+    class Config:
+        from_attributes = True

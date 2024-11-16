@@ -13,3 +13,5 @@ class Publicaciones(Base):
     descripcion = Column(String(255), nullable=True)
     fecha = Column(DateTime, default=datetime.datetime.utcnow)
     titulo = Column(String(255), nullable=True)
+    
+    usuario = relationship("Usuario", backref="publicaciones")
