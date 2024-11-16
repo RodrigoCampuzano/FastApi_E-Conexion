@@ -52,18 +52,13 @@ def update_publicacion(publicacion_id: int, publicacion_update: PublicacionesUpd
     db.refresh(publicacion)
     return publicacion
 
-
-from sqlalchemy.orm import joinedload
-
-@router.get("/", response_model=List[PublicacionesResponse])
+@router.get("/", response_model=List[PublicacionesResponseconUsuario])
 def read_all_chats(db: Session = Depends(get_db)):
     publicaciones = (
         db.query(Publicaciones)
-        .options(joinedload(Publicaciones.usuario))  # Cargar la relación
+        .options(joinedload(Publicaciones.usuario)) 
         .all()
     )
-
-    # Asegurar que cada publicación incluye el nombre del usuario
     result = [
         {
             "id_publicaciones": pub.id_publicaciones,
@@ -72,7 +67,7 @@ def read_all_chats(db: Session = Depends(get_db)):
             "descripcion": pub.descripcion,
             "fecha": pub.fecha,
             "titulo": pub.titulo,
-            "nombre_usuario": pub.usuario.nombre_usuario if pub.usuario else None,
+            "nombre_usuario": pub.usuario.nombre_usuario
         }
         for pub in publicaciones
     ]

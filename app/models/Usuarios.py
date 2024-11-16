@@ -1,6 +1,4 @@
-
-import datetime
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
 from app.db.database import Base
 
@@ -17,3 +15,5 @@ class Usuario(Base):
     tipo_usuario = Column(String(255), nullable=True)
     imagen_usuario = Column(String(255), nullable=True)
     estatus = Column(String(100), nullable=True)
+    
+    publicaciones = relationship("Publicaciones", back_populates="usuario")

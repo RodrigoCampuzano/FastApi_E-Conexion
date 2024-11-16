@@ -14,4 +14,4 @@ class Publicaciones(Base):
     fecha = Column(DateTime, default=datetime.datetime.utcnow)
     titulo = Column(String(255), nullable=True)
     
-    usuario = relationship("Usuario", backref="publicaciones")
+    usuario = relationship("Usuario", back_populates="publicaciones")
