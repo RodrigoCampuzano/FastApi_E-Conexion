@@ -22,12 +22,18 @@ def create_publicacion(publicacion: PublicacionesCreate, db: Session = Depends(g
     db.refresh(db_publicacion)
     return db_publicacion
 
-@router.get("/{publicacion_id}", response_model=PublicacionesResponse)
-def read_publicacion(publicacion_id: int, db: Session = Depends(get_db)):
-    publicacion = db.query(Publicaciones).filter(Publicaciones.id_publicaciones == publicacion_id).first()
+@router.get("/{publicacion_id}", response_model=List[PublicacionesResponse])
+def read_publicaciones_by_user(publicacion_id: int, db: Session = Depends(get_db)):
+    publicacion = db.query(Publicaciones).filter(Publicaciones.id_publicaciones_usuario == publicacion_id).first()
     if publicacion is None:
         raise HTTPException(status_code=404, detail="Publicación no encontrada")
-    return publicacion
+    publicaciones_relacionadas = (
+        db.query(Publicaciones).filter(Publicaciones.id_publicaciones_usuario == publicacion.id_publicaciones_usuario).all()
+    )
+    if not publicaciones_relacionadas:
+        raise HTTPException(status_code=404, detail="No se encontraron publicaciones relacionadas")    
+    return publicaciones_relacionadas
+
 
 @router.delete("/{publicacion_id}", response_model=PublicacionesResponse)
 def delete_publicacion(publicacion_id: int, db: Session = Depends(get_db)):

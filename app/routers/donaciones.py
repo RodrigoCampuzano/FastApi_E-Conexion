@@ -28,6 +28,25 @@ def read_donacionesid(donaciones_id: int, db : Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail='foro no encontrado')
     return donaciones
 
+@router.get("/donaciones/{donaciones_id}", response_model=List[DonacionesResponse])
+def read_donaciones_by_user(donaciones_id: int, db: Session = Depends(get_db)):
+    # Buscar la donación específica por su ID
+    donacion = db.query(Donaciones).filter(Donaciones.id_donaciones == donaciones_id).first()
+    if donacion is None:
+        raise HTTPException(status_code=404, detail="Donación no encontrada")
+    # Obtener todas las donaciones que pertenecen al mismo usuario (id_donaciones_usuario)
+    donaciones_relacionadas = (
+        db.query(Donaciones)
+        .filter(Donaciones.id_donaciones_usuario == donacion.id_donaciones_usuario)
+        .all()
+    )
+    
+    if not donaciones_relacionadas:
+        raise HTTPException(status_code=404, detail="No se encontraron donaciones relacionadas")
+    
+    return donaciones_relacionadas
+
+
 @router.delete("/{donaciones_id}", response_model=DonacionesResponse)
 def delete_donaciones(donaciones_id: int, db: Session = Depends(get_db)):
     donaciones = db.query(Donaciones).filter(Donaciones.id_donaciones == donaciones_id).first()

@@ -26,6 +26,25 @@ def read_mensaje(mensaje_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail='Mensaje no encontrado')
     return mensaje
 
+@router.get("/mensajes/{mensaje_id}", response_model=List[MensajesResponse])
+def read_mensajes_by_user(mensaje_id: int, db: Session = Depends(get_db)):
+    # Buscar el mensaje específico por su ID
+    mensaje = db.query(Mensajes).filter(Mensajes.id_mensajes == mensaje_id).first()
+    
+    if mensaje is None:
+        raise HTTPException(status_code=404, detail="Mensaje no encontrado")
+    
+    # Obtener todos los mensajes que pertenecen al mismo usuario (id_mensajes_usuario)
+    mensajes_relacionados = (
+        db.query(Mensajes)
+        .filter(Mensajes.id_mensajes_usuario == mensaje.id_mensajes_usuario)
+        .all()
+    )
+    if not mensajes_relacionados:
+        raise HTTPException(status_code=404, detail="No se encontraron mensajes relacionados")
+    
+    return mensajes_relacionados
+
 @router.delete("/{mensaje_id}", response_model=MensajesResponse)
 def delete_mensaje(mensaje_id: int, db: Session = Depends(get_db)):
     mensaje = db.query(Mensajes).filter(Mensajes.id_mensajes == mensaje_id).first()
@@ -46,8 +65,6 @@ def update_mensaje(mensaje_id: int, mensaje_update: MensajeUpdate, db: Session =
     db.commit()
     db.refresh(mensaje)
     return mensaje
-
-
 
 @router.get("/", response_model=List[MensajesResponse])
 def read_all_chats(db: Session = Depends(get_db)):
