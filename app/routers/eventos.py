@@ -45,7 +45,7 @@ def read_eventos_by_user(evento_id: int, db: Session = Depends(get_db)):
     # Obtener todos los eventos que pertenecen al mismo usuario (id_eventos_usuario)
     eventos_relacionados = (
         db.query(Eventos)
-        .filter(Eventos.id_eventos_usuario == evento.id_eventos_usuario)
+        .filter(Eventos.id_evento_usuario == evento.id_evento_usuario)
         .all()
     )
     

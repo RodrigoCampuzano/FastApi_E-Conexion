@@ -20,14 +20,14 @@ def create_listacontacto(listacontacto: ListaContactoCreate, db: Session = Depen
 
 @router.get("/{lista_id}", response_model=ListaContactoResponse)
 def read_listacontacto(lista_id: int, db: Session = Depends(get_db)):
-    listacontacto = db.query(ListaContacto).filter(ListaContacto.id_lista == lista_id).first()
+    listacontacto = db.query(ListaContacto).filter(ListaContacto.idlista == lista_id).first()
     if listacontacto is None:
         raise HTTPException(status_code=404, detail='Lista no encontrada')
     return listacontacto
 
 @router.delete("/{lista_id}", response_model=ListaContactoResponse)
 def delete_listacontacto(lista_id: int, db: Session = Depends(get_db)):
-    listacontacto = db.query(ListaContacto).filter(ListaContacto.id_lista == lista_id).first()
+    listacontacto = db.query(ListaContacto).filter(ListaContacto.idlista == lista_id).first()
     if listacontacto is None:
         raise HTTPException(status_code=404, detail="Lista no encontrada")
     
@@ -37,7 +37,7 @@ def delete_listacontacto(lista_id: int, db: Session = Depends(get_db)):
 
 @router.put("/{lista_id}", response_model=ListaContactoResponseUpdate)
 def update_lista(lista_id: int, lista_update: ListaContactoUpdate, db: Session = Depends(get_db)):
-    listacontacto = db.query(ListaContacto).filter(ListaContacto.id_lista == lista_id).first()
+    listacontacto = db.query(ListaContacto).filter(ListaContacto.idlista == lista_id).first()
     if listacontacto is None:
         raise HTTPException(status_code=404, detail="Lista no encontrada")
     

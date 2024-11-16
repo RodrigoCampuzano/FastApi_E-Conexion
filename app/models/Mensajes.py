@@ -7,7 +7,7 @@ class Mensajes(Base):
     __tablename__ = "mensajes"
     __table_args__= {"schema": "e_conexion"}
 
-    id_mensajes = Column(Integer, primary_key=True, index=True)
+    id_mensaje = Column(Integer, primary_key=True, index=True)
     id_usuario_mensaje = Column(Integer, ForeignKey("e_conexion.usuarios.id_usuario"), unique=True)
     contenido = Column(String, nullable=True)
     fecha = Column(DateTime, default=datetime.datetime.utcnow)

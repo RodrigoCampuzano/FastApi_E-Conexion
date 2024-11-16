@@ -7,7 +7,7 @@ class MensajesBase(BaseModel):
     fecha: datetime
     
 class MensajesResponse(MensajesBase):
-    id_mensajes: int
+    id_mensaje: int
     
     class Config:
         from_attributes  =True 
@@ -19,7 +19,7 @@ class MensajeUpdate(BaseModel):
     contenido: str
 
 class MensajesResponseUpdate(MensajeUpdate):
-    id_mensajes: int
+    id_mensaje: int
     
     class Config:
         from_attributes  =True 

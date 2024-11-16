@@ -37,7 +37,7 @@ def read_donaciones_by_user(donaciones_id: int, db: Session = Depends(get_db)):
     # Obtener todas las donaciones que pertenecen al mismo usuario (id_donaciones_usuario)
     donaciones_relacionadas = (
         db.query(Donaciones)
-        .filter(Donaciones.id_donaciones_usuario == donacion.id_donaciones_usuario)
+        .filter(Donaciones.id_donacion_usuario == donacion.id_donacion_usuario)
         .all()
     )
     

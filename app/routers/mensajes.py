@@ -17,11 +17,12 @@ def create_mensaje(mensaje: MensajesCreate, db: Session = Depends(get_db)):
     db.add(db_mensaje)
     db.commit()
     db.refresh(db_mensaje)
-    return db_mensaje
+    return MensajesResponse.from_orm(db_mensaje)
+
 
 @router.get("/{mensaje_id}", response_model=MensajesResponse)
 def read_mensaje(mensaje_id: int, db: Session = Depends(get_db)):
-    mensaje = db.query(Mensajes).filter(Mensajes.id_mensajes == mensaje_id).first()
+    mensaje = db.query(Mensajes).filter(Mensajes.id_mensaje == mensaje_id).first()
     if mensaje is None:
         raise HTTPException(status_code=404, detail='Mensaje no encontrado')
     return mensaje
@@ -29,7 +30,7 @@ def read_mensaje(mensaje_id: int, db: Session = Depends(get_db)):
 @router.get("/mensajes/{mensaje_id}", response_model=List[MensajesResponse])
 def read_mensajes_by_user(mensaje_id: int, db: Session = Depends(get_db)):
     # Buscar el mensaje específico por su ID
-    mensaje = db.query(Mensajes).filter(Mensajes.id_mensajes == mensaje_id).first()
+    mensaje = db.query(Mensajes).filter(Mensajes.id_mensaje == mensaje_id).first()
     
     if mensaje is None:
         raise HTTPException(status_code=404, detail="Mensaje no encontrado")
@@ -37,7 +38,7 @@ def read_mensajes_by_user(mensaje_id: int, db: Session = Depends(get_db)):
     # Obtener todos los mensajes que pertenecen al mismo usuario (id_mensajes_usuario)
     mensajes_relacionados = (
         db.query(Mensajes)
-        .filter(Mensajes.id_mensajes_usuario == mensaje.id_mensajes_usuario)
+        .filter(Mensajes.id_usuario_mensaje == mensaje.id_usuario_mensaje)
         .all()
     )
     if not mensajes_relacionados:
@@ -47,7 +48,7 @@ def read_mensajes_by_user(mensaje_id: int, db: Session = Depends(get_db)):
 
 @router.delete("/{mensaje_id}", response_model=MensajesResponse)
 def delete_mensaje(mensaje_id: int, db: Session = Depends(get_db)):
-    mensaje = db.query(Mensajes).filter(Mensajes.id_mensajes == mensaje_id).first()
+    mensaje = db.query(Mensajes).filter(Mensajes.id_mensaje == mensaje_id).first()
     if mensaje is None:
         raise HTTPException(status_code=404, detail="Mensaje no encontrado")
     
@@ -57,7 +58,7 @@ def delete_mensaje(mensaje_id: int, db: Session = Depends(get_db)):
 
 @router.put("/{mensaje_id}", response_model=MensajesResponseUpdate)
 def update_mensaje(mensaje_id: int, mensaje_update: MensajeUpdate, db: Session = Depends(get_db)):
-    mensaje = db.query(Mensajes).filter(Mensajes.id_mensajes == mensaje_id).first()
+    mensaje = db.query(Mensajes).filter(Mensajes.id_mensaje == mensaje_id).first()
     if mensaje is None:
         raise HTTPException(status_code=404, detail="Mensaje no encontrado")
     
