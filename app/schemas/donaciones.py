@@ -7,6 +7,7 @@ class DonacionesBase(BaseModel):
     fecha: datetime
     tipo_donacion: str
     estatus: str
+    id_evento: int
     
 class DonacionesResponse(DonacionesBase):
     id_donaciones: int
@@ -21,6 +22,7 @@ class DonacionesUpdate(BaseModel):
     cantidad: int
     tipo_donacion: str
     estatus: str
+    id_evento: int
 
 class DonacionesResponseUpdate(DonacionesUpdate):
     id_donaciones: int

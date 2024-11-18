@@ -29,13 +29,11 @@ def read_mensaje(mensaje_id: int, db: Session = Depends(get_db)):
 
 @router.get("/mensajes/{mensaje_id}", response_model=List[MensajesResponse])
 def read_mensajes_by_user(mensaje_id: int, db: Session = Depends(get_db)):
-    # Buscar el mensaje específico por su ID
-    mensaje = db.query(Mensajes).filter(Mensajes.id_mensaje == mensaje_id).first()
+    mensaje = db.query(Mensajes).filter(Mensajes.id_usuario_mensaje == mensaje_id).first()
     
     if mensaje is None:
         raise HTTPException(status_code=404, detail="Mensaje no encontrado")
-    
-    # Obtener todos los mensajes que pertenecen al mismo usuario (id_mensajes_usuario)
+
     mensajes_relacionados = (
         db.query(Mensajes)
         .filter(Mensajes.id_usuario_mensaje == mensaje.id_usuario_mensaje)

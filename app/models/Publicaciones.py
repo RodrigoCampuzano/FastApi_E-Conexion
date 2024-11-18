@@ -8,7 +8,7 @@ class Publicaciones(Base):
     __table_args__= {"schema": "e_conexion"}
 
     id_publicaciones = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    id_publicaciones_usuario = Column(Integer, ForeignKey("e_conexion.usuarios.id_usuario"), nullable=True)
+    id_publicaciones_usuario = Column(Integer, ForeignKey("e_conexion.usuarios.id_usuario", ondelete="CASCADE"), nullable=True)
     imagen = Column(String(255), nullable=True)
     descripcion = Column(String(255), nullable=True)
     fecha = Column(DateTime, default=datetime.datetime.utcnow)

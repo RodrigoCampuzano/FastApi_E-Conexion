@@ -2,6 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.db.dependencies import get_db
 from app.models.Usuarios import Usuario
+from app.models.Publicaciones import Publicaciones
+from app.models.Lista_contacto import ListaContacto 
 from app.schemas.usuario import UsuarioCreate, UsuarioResponse, UsuarioUpdate, UsuarioResponseUpdate
 from typing import List
 
@@ -33,6 +35,17 @@ def read_usuario(usuario_id: int, db: Session = Depends(get_db)):
 
 @router.delete("/{usuario_id}", response_model=UsuarioResponse)
 def delete_usuario(usuario_id: int, db: Session = Depends(get_db)):
+    publicaciones = db.query(Publicaciones).filter(Publicaciones.id_publicaciones_usuario == usuario_id).all()
+    for pub in publicaciones:
+        db.delete(pub)
+    db.commit()
+    
+    lista = db.query(ListaContacto).filter(ListaContacto.id_usuario_lista == usuario_id).all()
+    for lis in lista:
+        db.delete(lis)
+    db.commit(
+        
+    )    
     usuario = db.query(Usuario).filter(Usuario.id_usuario == usuario_id).first()
     if usuario is None:
         raise HTTPException(status_code=404, detail="Usuario no encontrado")

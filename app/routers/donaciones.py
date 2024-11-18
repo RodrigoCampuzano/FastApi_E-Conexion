@@ -14,7 +14,8 @@ def create_donaciones(donaciones: DonacionesCreate, db: Session = Depends(get_db
         cantidad=donaciones.cantidad,
         fecha=donaciones.fecha,
         tipo_donacion=donaciones.tipo_donacion,
-        estatus=donaciones.estatus
+        estatus=donaciones.estatus,
+        id_evento=donaciones.id_evento
     )
     db.add(db_donaciones)
     db.commit()
@@ -30,20 +31,12 @@ def read_donacionesid(donaciones_id: int, db : Session = Depends(get_db)):
 
 @router.get("/donaciones/{donaciones_id}", response_model=List[DonacionesResponse])
 def read_donaciones_by_user(donaciones_id: int, db: Session = Depends(get_db)):
-    # Buscar la donación específica por su ID
     donacion = db.query(Donaciones).filter(Donaciones.id_donaciones == donaciones_id).first()
     if donacion is None:
         raise HTTPException(status_code=404, detail="Donación no encontrada")
-    # Obtener todas las donaciones que pertenecen al mismo usuario (id_donaciones_usuario)
-    donaciones_relacionadas = (
-        db.query(Donaciones)
-        .filter(Donaciones.id_donacion_usuario == donacion.id_donacion_usuario)
-        .all()
-    )
-    
+    donaciones_relacionadas = (db.query(Donaciones).filter(Donaciones.id_donacion_usuario == donacion.id_donacion_usuario).all())    
     if not donaciones_relacionadas:
         raise HTTPException(status_code=404, detail="No se encontraron donaciones relacionadas")
-    
     return donaciones_relacionadas
 
 
@@ -65,6 +58,7 @@ def update_donaciones(donaciones_id: int, donaciones_update: DonacionesUpdate, d
     donaciones.cantidad=donaciones_update.cantidad
     donaciones.tipo_donacion=donaciones_update.tipo_donacion
     donaciones.estatus=donaciones_update.estatus
+    donaciones.estatus=donaciones_update.id_evento
     db.refresh(donaciones)
     return donaciones
 

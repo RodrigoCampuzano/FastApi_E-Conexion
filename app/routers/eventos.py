@@ -37,21 +37,21 @@ def read_evento(evento_id: int, db: Session = Depends(get_db)):
 @router.get("/eventos/{evento_id}", response_model=List[EventoResponse])
 def read_eventos_by_user(evento_id: int, db: Session = Depends(get_db)):
     # Buscar el evento específico por su ID
-    evento = db.query(Eventos).filter(Eventos.id_eventos == evento_id).first()
-    
+    evento = db.query(Eventos).filter(Eventos.id_evento_usuario == evento_id).first()
+
     if evento is None:
         raise HTTPException(status_code=404, detail="Evento no encontrado")
-    
+
     # Obtener todos los eventos que pertenecen al mismo usuario (id_eventos_usuario)
     eventos_relacionados = (
         db.query(Eventos)
         .filter(Eventos.id_evento_usuario == evento.id_evento_usuario)
         .all()
     )
-    
+
     if not eventos_relacionados:
         raise HTTPException(status_code=404, detail="No se encontraron eventos relacionados")
-    
+
     return eventos_relacionados
 
 @router.delete("/{evento_id}", response_model=EventoResponse)
