@@ -1,18 +1,25 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, File, UploadFile
 from sqlalchemy.orm import Session, joinedload
 from app.db.dependencies import get_db
 from app.models.Publicaciones import Publicaciones
-from app.models.Usuarios import Usuario
 from app.schemas.publicaciones import PublicacionesCreate, PublicacionesResponse, PublicacionesUpdate, PublicacionesResponseUpdate, PublicacionesResponseconUsuario
 from typing import List
+import os
+import shutil
 
 router = APIRouter()
 
+UPLOAD_DIRECTORY = "uploads/publicaciones"
+os.makedirs(UPLOAD_DIRECTORY, exist_ok=True)
+
 @router.post("/", response_model=PublicacionesResponse)
-def create_publicacion(publicacion: PublicacionesCreate, db: Session = Depends(get_db)):
+def create_publicacion(publicacion: PublicacionesCreate, file: UploadFile = File(None),db: Session = Depends(get_db)):
+    file_path =  f"{UPLOAD_DIRECTORY}/{file.filename}" 
+    with open(file_path, "wb") as f: shutil.copyfileobj(file.file, f)
+
     db_publicacion = Publicaciones(
         id_publicaciones_usuario=publicacion.id_publicaciones_usuario,
-        imagen=publicacion.imagen,
+        imagen=file_path,
         descripcion=publicacion.descripcion,
         fecha=publicacion.fecha,
         titulo=publicacion.titulo
@@ -46,12 +53,15 @@ def delete_publicacion(publicacion_id: int, db: Session = Depends(get_db)):
     return publicacion
 
 @router.put("/{publicacion_id}", response_model=PublicacionesResponseUpdate)
-def update_publicacion(publicacion_id: int, publicacion_update: PublicacionesUpdate, db: Session = Depends(get_db)):
+def update_publicacion(publicacion_id: int, publicacion_update: PublicacionesUpdate, file: UploadFile = File(None), db: Session = Depends(get_db)):
     publicacion = db.query(Publicaciones).filter(Publicaciones.id_publicaciones == publicacion_id).first()
     if publicacion is None:
         raise HTTPException(status_code=404, detail="Publicación no encontrada")
-    
-    publicacion.imagen = publicacion_update.imagen
+    if file:
+        if publicacion.imagen and os.path.exists(publicacion.imagen): os.remove(publicacion.imagen)
+        new_file_path = f"{UPLOAD_DIRECTORY}/{file.filename}"
+        with open(new_file_path, "wb") as f: shutil.copyfileobj(file.file, f)
+        publicacion.imagen = new_file_path
     publicacion.descripcion = publicacion_update.descripcion
     publicacion.titulo = publicacion_update.titulo
     db.commit()
@@ -81,11 +91,8 @@ def read_all_chats(db: Session = Depends(get_db)):
     if not publicaciones:
         raise HTTPException(status_code=404, detail="No publicaciones encontradas")
     return result
-
-
 @router.get("/publicacionById/{publicacion_id}", response_model = PublicacionesResponse)
 def     read_publicacion_by_id(publicacion_id: int, db: Session =  Depends(get_db)):
-        # Buscar la publicacion especifica por su ID
         publicacion = db.query(Publicaciones).filter(Publicaciones.id_publicaciones == publicacion_id).first()
         if publicacion is None:
                 raise HTTPException(status_code = 404, detail= "Publicaion no encontrada")

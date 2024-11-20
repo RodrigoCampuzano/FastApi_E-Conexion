@@ -1,7 +1,16 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from app.routers import donaciones, foro_lista_usuario, foro, lista_contacto, mensajes, publicaciones, eventos, usuarios, chat
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:4200"],
+    allow_credentials=True,
+    allow_methods=["*"],  
+    allow_headers=["*"],  
+)
 
 app.include_router(usuarios.router, prefix="/usuarios", tags=["usuarios"])
 app.include_router(eventos.router, prefix="/eventos", tags=["eventos"])
