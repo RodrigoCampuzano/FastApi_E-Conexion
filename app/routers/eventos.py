@@ -36,13 +36,10 @@ def read_evento(evento_id: int, db: Session = Depends(get_db)):
 
 @router.get("/eventos/{evento_id}", response_model=List[EventoResponse])
 def read_eventos_by_user(evento_id: int, db: Session = Depends(get_db)):
-    # Buscar el evento específico por su ID
     evento = db.query(Eventos).filter(Eventos.id_evento_usuario == evento_id).first()
 
     if evento is None:
         raise HTTPException(status_code=404, detail="Evento no encontrado")
-
-    # Obtener todos los eventos que pertenecen al mismo usuario (id_eventos_usuario)
     eventos_relacionados = (
         db.query(Eventos)
         .filter(Eventos.id_evento_usuario == evento.id_evento_usuario)
@@ -67,19 +64,16 @@ def delete_evento(evento_id: int, db: Session = Depends(get_db)):
 @router.put("/{evento_id}", response_model=EventoResponseUpdate)
 def update_evento(evento_id: int, evento_update: EventoUpdate, db: Session = Depends(get_db)):
     evento = db.query(Eventos).filter(Eventos.id_eventos == evento_id).first()
-    
-    # Si el evento no existe, lanzamos un error
+
     if evento is None:
         raise HTTPException(status_code=404, detail="Evento no encontrado")
-    
-    # Para depuración, muestra los valores actuales antes de actualizar
     print(f"Evento antes de actualización: {evento}")
-    
-    # Solo actualizamos los campos que son distintos de None
     if evento_update.id_donacion is not None:
         evento.id_donacion = evento_update.id_donacion
     if evento_update.descripcion is not None:
         evento.descripcion = evento_update.descripcion
+    if evento_update.fecha_creacion is not None:
+        evento.fecha_creacion = evento_update.fecha_creacion
     if evento_update.fecha_termino is not None:
         evento.fecha_termino = evento_update.fecha_termino
     if evento_update.estatus is not None:
@@ -92,12 +86,10 @@ def update_evento(evento_id: int, evento_update: EventoUpdate, db: Session = Dep
         evento.estatus_donacion = evento_update.estatus_donacion
     if evento_update.estatus_donador is not None:
         evento.estatus_donador = evento_update.estatus_donador
-    
-    # Para depuración, muestra los valores después de actualización
     print(f"Evento después de actualización: {evento}")
     
-    db.commit()  # Asegúrate de hacer commit después de la actualización
-    db.refresh(evento)  # Refrescar el objeto con los nuevos datos
+    db.commit()  
+    db.refresh(evento)
     return evento
 
 

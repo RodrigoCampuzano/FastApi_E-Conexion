@@ -15,6 +15,6 @@ class Chat(Base):
     id_chat = Column(Integer, nullable=True)
     id_mensaje = Column(Integer, ForeignKey("e_conexion.mensajes.id_mensaje"), nullable=True)
     id_chat_usuario = Column(Integer, ForeignKey("e_conexion.usuarios.id_usuario"), nullable=True, index=True)
-    fecha = Column(DateTime, default=datetime.datetime.utcnow)
+    fecha = Column(DateTime)
 
 

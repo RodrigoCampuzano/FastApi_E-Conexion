@@ -10,4 +10,4 @@ class ForoListaUsuario(Base):
     id_lista_foro = Column(Integer, ForeignKey("e_conexion.foro.id_foro"), primary_key=True, index=True)
     id_usuario = Column(Integer, ForeignKey("e_conexion.usuarios.id_usuario"), index=True)
     contenido = Column(String(500), nullable=False)
-    fecha = Column(DateTime, default=datetime.datetime.utcnow)
+    fecha = Column(DateTime)

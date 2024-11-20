@@ -10,7 +10,7 @@ class Donaciones(Base):
     id_donaciones = Column(Integer, primary_key=True, index=True, autoincrement=True)
     id_donacion_usuario = Column(Integer, ForeignKey("e_conexion.usuarios.id_usuario"), nullable=True, index=True)
     cantidad = Column(Integer, nullable=True)
-    fecha = Column(DateTime, default=datetime.datetime.utcnow)
+    fecha = Column(DateTime)
     tipo_donacion = Column(String(255), nullable=True)
     estatus = Column(String(255), nullable=True)
     id_evento = Column(Integer, ForeignKey("e_conexion.eventos.id_eventos"), nullable=True)

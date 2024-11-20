@@ -11,7 +11,7 @@ class Publicaciones(Base):
     id_publicaciones_usuario = Column(Integer, ForeignKey("e_conexion.usuarios.id_usuario", ondelete="CASCADE"), nullable=True)
     imagen = Column(String(255), nullable=True)
     descripcion = Column(String(255), nullable=True)
-    fecha = Column(DateTime, default=datetime.datetime.utcnow)
+    fecha = Column(DateTime)
     titulo = Column(String(255), nullable=True)
     
     usuario = relationship("Usuario", back_populates="publicaciones")

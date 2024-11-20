@@ -3,9 +3,9 @@ from datetime import datetime
 from typing import Optional
 
 class EventoBase(BaseModel):
-    id_evento_usuario: int  # id lista evento
-    id_organizador: int  # persona dueña del evento
-    id_donacion: Optional[int] = None  # id de la persona que dona a ese evento (opcional)
+    id_evento_usuario: int  
+    id_organizador: int  
+    id_donacion: Optional[int] = None  
     descripcion: str
     fecha_creacion: datetime
     fecha_termino: datetime
@@ -13,7 +13,7 @@ class EventoBase(BaseModel):
     nombre: str
     ubicacion: str
     estatus_donacion: str
-    estatus_donador: Optional[str] = None  # estatus donador (opcional)
+    estatus_donador: Optional[str] = None
     
 class EventoResponse(EventoBase):
     id_eventos: int
@@ -27,6 +27,7 @@ class EventoCreate(EventoBase):
 class EventoUpdate(BaseModel):
     id_donacion: int
     descripcion: str
+    fecha_creacion: datetime
     fecha_termino: datetime
     estatus: str
     nombre: str
