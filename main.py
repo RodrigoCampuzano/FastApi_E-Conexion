@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.routers import donaciones, foro_lista_usuario, foro, lista_contacto, mensajes, publicaciones, eventos, usuarios, chat
+from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
 
@@ -12,6 +13,7 @@ app.add_middleware(
     allow_headers=["*"],  
 )
 
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 app.include_router(usuarios.router, prefix="/usuarios", tags=["usuarios"])
 app.include_router(eventos.router, prefix="/eventos", tags=["eventos"])
 app.include_router(publicaciones.router, prefix="/publicaciones", tags=["publicaciones"])

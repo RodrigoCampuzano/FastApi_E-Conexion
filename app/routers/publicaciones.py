@@ -10,7 +10,6 @@ from fastapi.staticfiles import StaticFiles
 
 router = FastAPI()
 
-router.mount("/FastApi_E-Conexion/uploads/publicaciones", StaticFiles(directory="uploads/publicaciones"), name="uploads")
 UPLOAD_DIRECTORY = "uploads/publicaciones"
 os.makedirs(UPLOAD_DIRECTORY, exist_ok=True)
 
@@ -82,19 +81,15 @@ def update_publicacion(
         raise HTTPException(status_code=404, detail="Publicación no encontrada")
     
     if file:
-        # Eliminar la imagen anterior si existe
         if publicacion.imagen and os.path.exists(publicacion.imagen):
             os.remove(publicacion.imagen)
-        
-        # Guardar la nueva imagen
+    
         new_file_path = f"{UPLOAD_DIRECTORY}/{file.filename}"
         with open(new_file_path, "wb") as f:
             shutil.copyfileobj(file.file, f)
         
-        # Actualizar la URL de la imagen
         publicacion.imagen = f"http://34.197.52.229:8000/uploads/publicaciones/{file.filename}"
     
-    # Actualizar otros campos
     publicacion.descripcion = publicacion_update.descripcion
     publicacion.titulo = publicacion_update.titulo
     

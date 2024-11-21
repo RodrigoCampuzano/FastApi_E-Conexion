@@ -4,6 +4,7 @@ from app.db.dependencies import get_db
 from app.models.Eventos import Eventos
 from app.schemas.eventos import EventoCreate, EventoResponse, EventoUpdate, EventoResponseUpdate
 from typing import List
+from sqlalchemy import text
 
 router = APIRouter()
 
@@ -32,7 +33,7 @@ def read_evento(evento_id: int, db: Session = Depends(get_db)):
     evento = db.query(Eventos).filter(Eventos.id_eventos == evento_id).first()
     if evento is None:
         raise HTTPException(status_code=404, detail="Evento no encontrado")
-    db.execute("SELECT actualizar_estatus_eventos();")
+    db.execute(text("SELECT actualizar_estatus_eventos();"))
     db.commit()
     return evento
 
@@ -59,7 +60,7 @@ def delete_evento(evento_id: int, db: Session = Depends(get_db)):
     if evento is None:
         raise HTTPException(status_code=404, detail="Evento no encontrado")
     
-    db.execute("SELECT actualizar_estatus_eventos();")
+    db.execute(text("SELECT actualizar_estatus_eventos();"))
     db.delete(evento)
     db.commit()
     return evento
@@ -102,6 +103,6 @@ def read_all_chats(db: Session = Depends(get_db)):
     chats = db.query(Eventos).all()
     if not chats:
         raise HTTPException(status_code=404, detail="No chats found")
-    db.execute("SELECT actualizar_estatus_eventos();")
+    db.execute(text("SELECT actualizar_estatus_eventos();"))
     db.commit()
     return chats
