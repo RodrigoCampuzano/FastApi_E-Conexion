@@ -65,7 +65,7 @@ def register_usuario(
         contraseña_usuario=hashed_password,
         telefono_usuario=telefono_usuario,
         tipo_usuario=tipo_usuario,
-        imagen_usuario=file_path,  
+        imagen_usuario=file_url,  
         estatus=estatus,
     )
 
@@ -122,7 +122,7 @@ def create_usuario(
         contraseña_usuario=contraseña_usuario,
         telefono_usuario=telefono_usuario,
         tipo_usuario=tipo_usuario,
-        imagen_usuario=file_path,
+        imagen_usuario=file_url,
         estatus=estatus
     )
     db.add(db_usuario)
