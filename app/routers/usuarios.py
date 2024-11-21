@@ -85,7 +85,6 @@ def login_usuario(
     if not pwd_context.verify(contraseña_usuario, usuario.contraseña_usuario):
         raise HTTPException(status_code=401, detail="Credenciales inválidas.")
     
-    # Crear el token JWT sin expiración (365 días de validez)
     access_token = create_access_token(data={"sub": str(usuario.id_usuario)})
 
     return {
@@ -169,7 +168,6 @@ async def update_usuario(
     if usuario is None:
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
 
-    # Encriptar contraseña si se proporciona una nueva
     if usuario_update.contraseña_usuario:
         usuario_update.contraseña_usuario = pwd_context.hash(usuario_update.contraseña_usuario)
 

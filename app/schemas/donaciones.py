@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from datetime import datetime
+from typing import Optional
 
 class DonacionesBase(BaseModel):
     id_donacion_usuario: int
@@ -7,7 +8,7 @@ class DonacionesBase(BaseModel):
     fecha: datetime
     tipo_donacion: str
     estatus: str
-    id_evento: int
+    id_evento: Optional[str] = None
     
 class DonacionesResponse(DonacionesBase):
     id_donaciones: int
@@ -22,7 +23,7 @@ class DonacionesUpdate(BaseModel):
     cantidad: int
     tipo_donacion: str
     estatus: str
-    id_evento: int
+    id_evento: Optional[str] = None
 
 class DonacionesResponseUpdate(DonacionesUpdate):
     id_donaciones: int
