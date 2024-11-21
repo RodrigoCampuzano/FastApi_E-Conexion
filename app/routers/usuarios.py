@@ -20,7 +20,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 UPLOAD_DIRECTORY = "uploads/publicaciones"
 os.makedirs(UPLOAD_DIRECTORY, exist_ok=True)
 
-SECRET_KEY = "ilGJrZmMbQDswbWtKknBzRzK639VhGCg"
+SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
 
 def create_access_token(data: Dict[str, str], expires_delta: timedelta = timedelta(days=365)):
