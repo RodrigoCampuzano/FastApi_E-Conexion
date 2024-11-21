@@ -28,7 +28,7 @@ def create_publicacion(
         file_path = f"{UPLOAD_DIRECTORY}/{file.filename}"
         with open(file_path, "wb") as f:
             shutil.copyfileobj(file.file, f)
-        file_url = f"http://34.197.52.229:8000/uploads/publicaciones/{file.filename}"
+        file_url = f"http://34.197.52.229:8000/FastApi_E-Conexion/uploads/publicaciones/{file.filename}"
     else:
         file_url = None 
 
