@@ -115,7 +115,6 @@ def create_usuario(
         file_url = f"http://34.197.52.229:8000/uploads/publicaciones/{file.filename}"
     else:
         file_url = None 
-
     db_usuario = Usuario(
         nombre_usuario=nombre_usuario,
         apellidos_usuario=apellidos_usuario,
