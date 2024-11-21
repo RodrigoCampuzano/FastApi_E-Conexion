@@ -31,7 +31,7 @@ def create_publicacion(publicacion: PublicacionesCreate, file: UploadFile = File
 
 @router.get("/{publicacion_id}", response_model=List[PublicacionesResponse])
 def read_publicaciones_by_user(publicacion_id: int, db: Session = Depends(get_db)):
-    publicacion = db.query(Publicaciones).filter(Publicaciones.id_publicaciones == publicacion_id).first()
+    publicacion = db.query(Publicaciones).filter(Publicaciones.id_publicaciones_usuario == publicacion_id).first()
     if publicacion is None:
         raise HTTPException(status_code=404, detail="Publicación no encontrada")
     publicaciones_relacionadas = (
@@ -91,6 +91,7 @@ def read_all_chats(db: Session = Depends(get_db)):
     if not publicaciones:
         raise HTTPException(status_code=404, detail="No publicaciones encontradas")
     return result
+
 @router.get("/publicacionById/{publicacion_id}", response_model = PublicacionesResponse)
 def     read_publicacion_by_id(publicacion_id: int, db: Session =  Depends(get_db)):
         publicacion = db.query(Publicaciones).filter(Publicaciones.id_publicaciones == publicacion_id).first()

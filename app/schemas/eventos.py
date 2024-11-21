@@ -25,7 +25,7 @@ class EventoCreate(EventoBase):
     pass
 
 class EventoUpdate(BaseModel):
-    id_donacion: int
+    id_donacion: Optional[int] = None
     descripcion: str
     fecha_creacion: datetime
     fecha_termino: datetime
