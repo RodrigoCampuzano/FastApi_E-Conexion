@@ -28,7 +28,7 @@ def create_publicacion(
         file_path = f"{UPLOAD_DIRECTORY}/{file.filename}"
         with open(file_path, "wb") as f:
             shutil.copyfileobj(file.file, f)
-        file_url = f"http://34.197.52.229:8000/{UPLOAD_DIRECTORY}/{file.filename}"
+        file_url = f"http://34.197.52.229:8000/uploads/publicaciones/{file.filename}"
     else:
         file_url = None 
 
@@ -88,7 +88,7 @@ def update_publicacion(
         with open(new_file_path, "wb") as f:
             shutil.copyfileobj(file.file, f)
         
-        publicacion.imagen = f"http://34.197.52.229:8000/{UPLOAD_DIRECTORY}/{file.filename}"
+        publicacion.imagen = f"http://34.197.52.229:8000/uploads/publicaciones/{file.filename}"
     
     publicacion.descripcion = publicacion_update.descripcion
     publicacion.titulo = publicacion_update.titulo

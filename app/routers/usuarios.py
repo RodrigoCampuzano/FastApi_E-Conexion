@@ -50,12 +50,13 @@ def register_usuario(
 
     if file:
         if not file.filename.endswith(('.png', '.jpg', '.jpeg')):
-            raise HTTPException(status_code=400, detail="Tipo de archivo no soportado. Solo se permiten .png, .jpg y .jpeg.")
-        file_path = f"http://34.197.52.229:8000/uploads/publicaciones/{file.filename}"
+            raise HTTPException(status_code=400, detail="Unsupported file type. Only .png, .jpg, and .jpeg are allowed.")
+        file_path = f"{UPLOAD_DIRECTORY}/{file.filename}"
         with open(file_path, "wb") as f:
             shutil.copyfileobj(file.file, f)
+        file_url = f"http://34.197.52.229:8000/uploads/publicaciones/{file.filename}"
     else:
-        file_path = None  
+        file_url = None  
 
     new_usuario = Usuario(
         nombre_usuario=nombre_usuario,
@@ -107,12 +108,13 @@ def create_usuario(
 ):
     if file:
         if not file.filename.endswith(('.png', '.jpg', '.jpeg')):
-            raise HTTPException(status_code=400, detail="Tipo de archivo no soportado. Solo se permiten .png, .jpg y .jpeg.")
-        file_path = f"http://34.197.52.229:8000/uploads/publicaciones/{file.filename}"
+            raise HTTPException(status_code=400, detail="Unsupported file type. Only .png, .jpg, and .jpeg are allowed.")
+        file_path = f"{UPLOAD_DIRECTORY}/{file.filename}"
         with open(file_path, "wb") as f:
             shutil.copyfileobj(file.file, f)
+        file_url = f"http://34.197.52.229:8000/uploads/publicaciones/{file.filename}"
     else:
-        file_path = None
+        file_url = None 
 
     db_usuario = Usuario(
         nombre_usuario=nombre_usuario,
