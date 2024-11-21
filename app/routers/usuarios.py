@@ -17,7 +17,7 @@ router = APIRouter()
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-UPLOAD_DIRECTORY = "uploads/images"
+UPLOAD_DIRECTORY = "uploads/publicaciones"
 os.makedirs(UPLOAD_DIRECTORY, exist_ok=True)
 
 SECRET_KEY = "ilGJrZmMbQDswbWtKknBzRzK639VhGCg"
