@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, File, UploadFile, Form
+from fastapi import APIRouter, Depends, HTTPException, File, UploadFile, Form, FastAPI
 from sqlalchemy.orm import Session, joinedload
 from app.db.dependencies import get_db
 from app.models.Publicaciones import Publicaciones
@@ -6,9 +6,11 @@ from app.schemas.publicaciones import PublicacionesCreate, PublicacionesResponse
 from typing import List
 import os
 import shutil
+from fastapi.staticfiles import StaticFiles
 
-router = APIRouter()
+router = FastAPI()
 
+router.mount("/FastApi_E-Conexion/uploads/publicaciones", StaticFiles(directory="uploads/publicaciones"), name="uploads")
 UPLOAD_DIRECTORY = "uploads/publicaciones"
 os.makedirs(UPLOAD_DIRECTORY, exist_ok=True)
 
@@ -18,7 +20,7 @@ def create_publicacion(
     descripcion: str = Form(...),
     fecha: str = Form(...),
     titulo: str = Form(...),
-    file: UploadFile = File(None),  # Archivo opcional
+    file: UploadFile = File(None),
     db: Session = Depends(get_db)
 ):
     if file:
@@ -27,12 +29,13 @@ def create_publicacion(
         file_path = f"{UPLOAD_DIRECTORY}/{file.filename}"
         with open(file_path, "wb") as f:
             shutil.copyfileobj(file.file, f)
+        file_url = f"http://34.197.52.229:8000/uploads/publicaciones/{file.filename}"
     else:
-        file_path = None  #
+        file_url = None 
 
     db_publicacion = Publicaciones(
         id_publicaciones_usuario=id_publicaciones_usuario,
-        imagen=file_path,
+        imagen=file_url,
         descripcion=descripcion,
         fecha=fecha,
         titulo=titulo,
@@ -42,6 +45,7 @@ def create_publicacion(
     db.refresh(db_publicacion)
     
     return db_publicacion
+
 
 @router.get("/{publicacion_id}", response_model=List[PublicacionesResponse])
 def read_publicaciones_by_user(publicacion_id: int, db: Session = Depends(get_db)):
@@ -76,14 +80,21 @@ def update_publicacion(
     publicacion = db.query(Publicaciones).filter(Publicaciones.id_publicaciones == publicacion_id).first()
     if publicacion is None:
         raise HTTPException(status_code=404, detail="Publicación no encontrada")
+    
     if file:
+        # Eliminar la imagen anterior si existe
         if publicacion.imagen and os.path.exists(publicacion.imagen):
             os.remove(publicacion.imagen)
+        
+        # Guardar la nueva imagen
         new_file_path = f"{UPLOAD_DIRECTORY}/{file.filename}"
         with open(new_file_path, "wb") as f:
             shutil.copyfileobj(file.file, f)
-        publicacion.imagen = new_file_path
+        
+        # Actualizar la URL de la imagen
+        publicacion.imagen = f"http://34.197.52.229:8000/uploads/publicaciones/{file.filename}"
     
+    # Actualizar otros campos
     publicacion.descripcion = publicacion_update.descripcion
     publicacion.titulo = publicacion_update.titulo
     

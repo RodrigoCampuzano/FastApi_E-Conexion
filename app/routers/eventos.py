@@ -32,6 +32,8 @@ def read_evento(evento_id: int, db: Session = Depends(get_db)):
     evento = db.query(Eventos).filter(Eventos.id_eventos == evento_id).first()
     if evento is None:
         raise HTTPException(status_code=404, detail="Evento no encontrado")
+    db.execute("SELECT actualizar_estatus_eventos();")
+    db.commit()
     return evento
 
 @router.get("/eventos/{evento_id}", response_model=List[EventoResponse])
@@ -57,6 +59,7 @@ def delete_evento(evento_id: int, db: Session = Depends(get_db)):
     if evento is None:
         raise HTTPException(status_code=404, detail="Evento no encontrado")
     
+    db.execute("SELECT actualizar_estatus_eventos();")
     db.delete(evento)
     db.commit()
     return evento
@@ -88,6 +91,7 @@ def update_evento(evento_id: int, evento_update: EventoUpdate, db: Session = Dep
         evento.estatus_donador = evento_update.estatus_donador
     print(f"Evento después de actualización: {evento}")
     
+    
     db.commit()  
     db.refresh(evento)
     return evento
@@ -98,4 +102,6 @@ def read_all_chats(db: Session = Depends(get_db)):
     chats = db.query(Eventos).all()
     if not chats:
         raise HTTPException(status_code=404, detail="No chats found")
+    db.execute("SELECT actualizar_estatus_eventos();")
+    db.commit()
     return chats
