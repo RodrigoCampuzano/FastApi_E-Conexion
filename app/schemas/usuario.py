@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import Optional
 
 class UsuarioBase(BaseModel):
     nombre_usuario: str
@@ -7,7 +8,7 @@ class UsuarioBase(BaseModel):
     contraseña_usuario: str
     telefono_usuario: str
     tipo_usuario: str
-    imagen_usuario: str
+    imagen_usuario: Optional[str] = None
     estatus: str
 
 class UsuarioResponse(UsuarioBase):
