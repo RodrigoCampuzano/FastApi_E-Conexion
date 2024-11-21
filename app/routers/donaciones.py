@@ -59,6 +59,7 @@ def update_donaciones(donaciones_id: int, donaciones_update: DonacionesUpdate, d
     donaciones.tipo_donacion=donaciones_update.tipo_donacion
     donaciones.estatus=donaciones_update.estatus
     donaciones.id_evento=donaciones_update.id_evento
+    db.commit()
     db.refresh(donaciones)
     return donaciones
 
