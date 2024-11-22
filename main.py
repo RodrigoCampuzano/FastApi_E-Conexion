@@ -20,6 +20,6 @@ app.include_router(publicaciones.router, prefix="/publicaciones", tags=["publica
 app.include_router(mensajes.router, prefix="/mensajes", tags=["mensajes"])
 app.include_router(lista_contacto.router, prefix="/lista_contacto", tags=["lista_contacto"])
 app.include_router(foro.router, prefix="/foro", tags=["foro"])
-app.include_router(Usuario_has_chat.router, prefix="/foro_usuario", tags=["foro_usuario"])
+app.include_router(Usuario_has_chat.router, prefix="/usuario_has_chat", tags=["usuario_has_chat"])
 app.include_router(donaciones.router, prefix="/donaciones", tags=["donaciones"])
 app.include_router(chat.router, prefix="/chat", tags=["chat"])
