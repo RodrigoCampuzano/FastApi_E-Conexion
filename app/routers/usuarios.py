@@ -35,7 +35,7 @@ def register_usuario(
     nombre_usuario: str = Form(...),
     apellidos_usuario: str = Form(...),
     correo_usuario: EmailStr = Form(...), 
-    contraseña_usuario: str = Form(...),
+    contrasena_usuario: str = Form(...),
     telefono_usuario: str = Form(...),
     tipo_usuario: str = Form(...),
     estatus: str = Form(...),
@@ -46,7 +46,7 @@ def register_usuario(
     if existing_user:
         raise HTTPException(status_code=400, detail="El correo ya está registrado.")
 
-    hashed_password = pwd_context.hash(contraseña_usuario)
+    hashed_password = pwd_context.hash(contrasena_usuario)
 
     if file:
         if not file.filename.endswith(('.png', '.jpg', '.jpeg')):
@@ -62,7 +62,7 @@ def register_usuario(
         nombre_usuario=nombre_usuario,
         apellidos_usuario=apellidos_usuario,
         correo_usuario=correo_usuario,
-        contraseña_usuario=hashed_password,
+        contrasena_usuario=hashed_password,
         telefono_usuario=telefono_usuario,
         tipo_usuario=tipo_usuario,
         imagen_usuario=file_url,  
@@ -77,13 +77,13 @@ def register_usuario(
 @router.post("/login", response_model=Dict[str, str])
 def login_usuario(
     correo_usuario: str = Form(...),
-    contraseña_usuario: str = Form(...),
+    contrasena_usuario: str = Form(...),
     db: Session = Depends(get_db)
 ):
     usuario = db.query(Usuario).filter(Usuario.correo_usuario == correo_usuario).first()
     if not usuario:
         raise HTTPException(status_code=401, detail="Credenciales inválidas.")
-    if not pwd_context.verify(contraseña_usuario, usuario.contraseña_usuario):
+    if not pwd_context.verify(contrasena_usuario, usuario.contrasena_usuario):
         raise HTTPException(status_code=401, detail="Credenciales inválidas.")
     
     access_token = create_access_token(data={"sub": str(usuario.id_usuario)})
@@ -99,7 +99,7 @@ def create_usuario(
     nombre_usuario: str = Form(...),
     apellidos_usuario: str = Form(...),
     correo_usuario: EmailStr = Form(...),  
-    contraseña_usuario: str = Form(...),
+    contrasena_usuario: str = Form(...),
     telefono_usuario: str = Form(...),
     tipo_usuario: str = Form(...),
     estatus: str = Form(...),
@@ -119,7 +119,7 @@ def create_usuario(
         nombre_usuario=nombre_usuario,
         apellidos_usuario=apellidos_usuario,
         correo_usuario=correo_usuario,
-        contraseña_usuario=contraseña_usuario,
+        contrasena_usuario=contrasena_usuario,
         telefono_usuario=telefono_usuario,
         tipo_usuario=tipo_usuario,
         imagen_usuario=file_url,
@@ -169,8 +169,8 @@ async def update_usuario(
     if usuario is None:
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
 
-    if usuario_update.contraseña_usuario:
-        usuario_update.contraseña_usuario = pwd_context.hash(usuario_update.contraseña_usuario)
+    if usuario_update.contrasena_usuario:
+        usuario_update.contrasena_usuario = pwd_context.hash(usuario_update.contrasena_usuario)
 
     if file:
         if usuario.imagen_usuario and os.path.exists(usuario.imagen_usuario):
@@ -183,7 +183,7 @@ async def update_usuario(
     usuario.nombre_usuario = usuario_update.nombre_usuario
     usuario.apellidos_usuario = usuario_update.apellidos_usuario
     usuario.correo_usuario = usuario_update.correo_usuario
-    usuario.contraseña_usuario = usuario_update.contraseña_usuario
+    usuario.contrasena_usuario = usuario_update.contrasena_usuario
     usuario.telefono_usuario = usuario_update.telefono_usuario
     usuario.tipo_usuario = usuario_update.tipo_usuario
     usuario.estatus = usuario_update.estatus

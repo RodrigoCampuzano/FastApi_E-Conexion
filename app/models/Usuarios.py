@@ -10,7 +10,7 @@ class Usuario(Base):
     nombre_usuario = Column(String(255), nullable=True)
     apellidos_usuario = Column(String(255), nullable=True)
     correo_usuario = Column(String(255), nullable=True)
-    contraseña_usuario = Column(String(255), nullable=True, unique=True)
+    contrasena_usuario = Column(String(255), nullable=True, unique=True)
     telefono_usuario = Column(String(25), nullable=True)
     tipo_usuario = Column(String(255), nullable=True)
     imagen_usuario = Column(String(255), nullable=True)
