@@ -19,7 +19,7 @@ class UsuarioHasChatCreate(UsuarioHasChatBase):
 class UsuarioHasChatUpdate(BaseModel):
     contenido: str
 
-class ForoUsuarioResponseUpdate(UsuarioHasChatUpdate):
+class UsuarioHasChatResponseUpdate(UsuarioHasChatUpdate):
     id_lista_foro: int
     
     class Config:

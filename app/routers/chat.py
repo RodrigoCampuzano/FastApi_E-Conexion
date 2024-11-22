@@ -2,57 +2,62 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.db.dependencies import get_db
 from app.schemas.chat import ChatResponse, ChatCreate, ChatUpdate, ChatResponseUpdate
-from app.models.Chat import Chat 
+from app.models.Chat import Chat
 from typing import List
 
 
 router = APIRouter()
 
+# Ruta para crear un chat
 @router.post("/", response_model=ChatResponse)
 def create_chat(chat: ChatCreate, db: Session = Depends(get_db)):
     db_chat = Chat(
-        id_mensaje=chat.id_mensaje,
-        id_chat_Usuario=chat.id_chat_usuario,
-        fecha=chat.fecha
+        ultimo_msj=chat.ultimo_msj  
     )
     db.add(db_chat)
     db.commit()
-    db.refresh(db_chat)
+    db.refresh(db_chat)  
     return db_chat
 
+
+# Ruta para leer un chat por su ID
 @router.get("/{chat_id}", response_model=ChatResponse)
-def read_chatid(chat_id: int, db : Session = Depends(get_db)):
+def read_chatid(chat_id: int, db: Session = Depends(get_db)):
     chat = db.query(Chat).filter(Chat.id_chat == chat_id).first()
     if chat is None:
-        raise HTTPException(status_code=404, detail='foro no encontrado')
+        raise HTTPException(status_code=404, detail="Chat no encontrado")
     return chat
 
+
+# Ruta para eliminar un chat por su ID
 @router.delete("/{chat_id}", response_model=ChatResponse)
 def delete_chat(chat_id: int, db: Session = Depends(get_db)):
-    chat = db.query(Chat).filter(Chat.id == chat_id).first()
+    chat = db.query(Chat).filter(Chat.id_chat == chat_id).first()  # Usar id_chat para la búsqueda
     if chat is None:
-        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+        raise HTTPException(status_code=404, detail="Chat no encontrado")
     
     db.delete(chat)
     db.commit()
     return chat
 
+
+# Ruta para actualizar un chat por su ID
 @router.put("/{chat_id}", response_model=ChatResponseUpdate)
-def update_evento(chat_id: int, chat_update: ChatUpdate, db: Session = Depends(get_db)):
+def update_chat(chat_id: int, chat_update: ChatUpdate, db: Session = Depends(get_db)):
     chat = db.query(Chat).filter(Chat.id_chat == chat_id).first()
     if chat is None:
-        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+        raise HTTPException(status_code=404, detail="Chat no encontrado")
     
-    chat.id_mensaje=chat_update.id_mensaje,
-    chat.id_chat_usuario=chat_update.id_chat_usuario,
-    chat.fecha=chat_update.fecha
-    chat.id_chat_usuario=chat_update.id_chat_usuario
-    db.refresh(chat)
+    chat.ultimo_msj = chat_update.ultimo_msj  
+    db.commit()  
+    db.refresh(chat)  
     return chat
 
+
+# Ruta para obtener todos los chats
 @router.get("/", response_model=List[ChatResponse])
 def read_all_chats(db: Session = Depends(get_db)):
     chats = db.query(Chat).all()
     if not chats:
-        raise HTTPException(status_code=404, detail="No chats found")
+        raise HTTPException(status_code=404, detail="No chats encontrados")
     return chats
