@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 class ForoBase(BaseModel):
-    id_lista_foro: int
+    id_chat: int
     nombre_foro: str
     descripcion: str
 

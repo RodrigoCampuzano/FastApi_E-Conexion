@@ -1,25 +1,25 @@
 from pydantic import BaseModel
 from datetime import datetime
 
-class ForoUsuarioBase(BaseModel):
+class UsuarioHasChatBase(BaseModel):
     id_lista_foro: int
     id_usuario: int
     contenido: str
     fecha: datetime
     
-class ForoUsuarioResponse(ForoUsuarioBase):
+class UsuarioHasChatResponse(UsuarioHasChatBase):
     id_lista_foro: int
     
     class Config:
         from_attributes  =True
         
-class ForoUsuarioCreate(ForoUsuarioBase):
+class UsuarioHasChatCreate(UsuarioHasChatBase):
     pass
 
-class ForoUsuarioUpdate(BaseModel):
+class UsuarioHasChatUpdate(BaseModel):
     contenido: str
 
-class ForoUsuarioResponseUpdate(ForoUsuarioUpdate):
+class ForoUsuarioResponseUpdate(UsuarioHasChatUpdate):
     id_lista_foro: int
     
     class Config:

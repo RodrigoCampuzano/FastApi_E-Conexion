@@ -2,9 +2,11 @@ from pydantic import BaseModel
 from datetime import datetime
 
 class MensajesBase(BaseModel):
-    id_usuario_mensaje: int
-    contenido: str
+    id_chat: int 
     fecha: datetime
+    estatus: str 
+    mensaje: str 
+    id_emisor: int 
     
 class MensajesResponse(MensajesBase):
     id_mensaje: int
@@ -16,7 +18,7 @@ class MensajesCreate(MensajesBase):
     pass
 
 class MensajeUpdate(BaseModel):
-    contenido: str
+    mensaje: str
 
 class MensajesResponseUpdate(MensajeUpdate):
     id_mensaje: int

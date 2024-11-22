@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.db.dependencies import get_db
-from app.models.Foro_lista_usuario import ForoListaUsuario
-from app.schemas.foro_lista_usuario import ForoUsuarioCreate, ForoUsuarioResponse, ForoUsuarioUpdate, ForoUsuarioResponseUpdate
+from app.models.Usuario_has_chat import ForoListaUsuario
+from app.schemas.usuario_has_chat import ForoUsuarioCreate, ForoUsuarioResponse, ForoUsuarioUpdate, ForoUsuarioResponseUpdate
 from typing import List
 
 router = APIRouter()

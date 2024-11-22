@@ -1,6 +1,4 @@
-import datetime
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, ForeignKey
 from app.db.database import Base
   
 class ListaContacto(Base):
@@ -8,7 +6,7 @@ class ListaContacto(Base):
     __table_args__= {"schema": "e_conexion"}
 
     idlista = Column(Integer, primary_key=True, index=True)
-    id_usuario = Column(Integer, ForeignKey("e_conexion.usuarios.id_usuario"), nullable=True)
-    id_usuario_lista = Column(Integer, ForeignKey("e_conexion.usuarios.id_usuario"), nullable=True)
+    id_usuario = Column(Integer, nullable=True)
+    usuario_idusuario = Column(Integer, ForeignKey("e_conexion.usuarios.id_usuario"), nullable=True)
 
 
