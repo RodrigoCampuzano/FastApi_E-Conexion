@@ -7,4 +7,4 @@ class ForoListaUsuario(Base):
     __table_args__= {"schema": "e_conexion"}
 
     usuario_idusuario = Column(Integer, ForeignKey("e_conexion.usuarios.id_usuario"), primary_key=True, index=True)
-    chat_idchat = Column(Integer, ForeignKey("e_conexion.chat.id_chat"), primaty_key=True, index=True)
+    chat_idchat = Column(Integer, ForeignKey("e_conexion.chat.id_chat"), primary_key=True, index=True)
