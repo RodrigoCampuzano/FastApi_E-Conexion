@@ -130,7 +130,7 @@ def read_publicaciones_by_user(id_usuario: int, db: Session = Depends(get_db)):
     ]
     if not publicaciones_relacionadas:
         raise HTTPException(status_code=404, detail="No se encontraron publicaciones relacionadas")    
-    return publicaciones_relacionadas
+    return result
 
 @router.get("/publicacionById/{publicacion_id}", response_model = PublicacionesResponse)
 def     read_publicacion_by_id(publicacion_id: int, db: Session =  Depends(get_db)):
