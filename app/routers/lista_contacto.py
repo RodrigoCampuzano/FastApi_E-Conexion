@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session, joinedload
 from app.db.dependencies import get_db
 from app.models.Lista_contacto import ListaContacto
+from app.models.Usuarios import Usuario
 from app.schemas.lista_contacto import ListaContactoCreate, ListaContactoResponse, ListaContactoUpdate, ListaContactoResponseUpdate
 from typing import List
 
@@ -35,8 +36,8 @@ def read_listacontacto(id_usuario: int, db: Session = Depends(get_db)):
                 "idlista": lista.idlista,
                 "id_usuario": lista.id_usuario,
                 "usuario_correo": lista.usuario_correo,
-                "usuario_id": usuario.id_usuario,  # ID del usuario asociado al correo
-                "usuario_nombre": usuario.nombre_usuario  # Nombre del usuario asociado al correo
+                "usuario_id": usuario.id_usuario,  
+                "usuario_nombre": usuario.nombre_usuario  
             })
 
     return result
