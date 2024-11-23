@@ -23,12 +23,13 @@ def create_listacontacto(listacontacto: ListaContactoCreate, db: Session = Depen
 # Ruta para obtener una lista de contactos por id del usuario
 @router.get("/{id_usuario}", response_model=List[ListaContactoResponse])
 def read_listacontacto(id_usuario: int, db: Session = Depends(get_db)):
+    # Realizamos el JOIN entre ListaContacto y Usuario
     listacontacto = db.query(
-        Usuario.id_usuario,
-        Usuario.nombre_usuario,
         ListaContacto.idlista,
         ListaContacto.id_usuario,
-        ListaContacto.usuario_correo
+        ListaContacto.usuario_correo,
+        Usuario.id_usuario.label("usuario_id"),  # Alias para el id_usuario de Usuario
+        Usuario.nombre_usuario.label("usuario_nombre")  # Alias para nombre_usuario
     ).join(
         Usuario, Usuario.correo_usuario == ListaContacto.usuario_correo
     ).filter(
@@ -37,21 +38,20 @@ def read_listacontacto(id_usuario: int, db: Session = Depends(get_db)):
 
     if not listacontacto:
         raise HTTPException(status_code=404, detail="Lista de contactos no encontrada")
+
+    # Preparamos el resultado para enviar en la respuesta
     result = [
         {
             "idlista": lista.idlista,
             "id_usuario": lista.id_usuario,
             "usuario_correo": lista.usuario_correo,
-            "usuario_id": lista.id_usuario,  
-            "usuario_nombre": lista.nombre_usuario  
+            "usuario_id": lista.usuario_id,  # ID de Usuario de la tabla Usuario
+            "usuario_nombre": lista.usuario_nombre  # Nombre de Usuario de la tabla Usuario
         }
         for lista in listacontacto
     ]
 
     return result
-
-
-
 
 # Ruta para eliminar una lista de contactos por su ID
 @router.delete("/{lista_id}", response_model=ListaContactoResponse)
