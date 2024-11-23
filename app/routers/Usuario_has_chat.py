@@ -28,9 +28,12 @@ def read_forousuario(usuario_id: int, db: Session = Depends(get_db)):
     return forousuario
 
 # Eliminar relación por usuario_id
-@router.delete("/{usuario_id}", response_model=UsuarioHasChatResponse)
-def delete_forousuario(usuario_id: int, db: Session = Depends(get_db)):
-    forousuario = db.query(UsuarioHasChat).filter(UsuarioHasChat.usuario_idusuario == usuario_id).first()
+@router.delete("/{usuario_id}/{chat_id}", response_model=UsuarioHasChatResponse)
+def delete_forousuario(usuario_id: int, chat_id: int, db: Session = Depends(get_db)):
+    forousuario = db.query(UsuarioHasChat).filter(
+        UsuarioHasChat.usuario_idusuario == usuario_id,
+        UsuarioHasChat.chat_idchat == chat_id
+    ).first()
     if forousuario is None:
         raise HTTPException(status_code=404, detail="Relación usuario-chat no encontrada")
     db.delete(forousuario)
