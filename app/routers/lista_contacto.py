@@ -20,7 +20,7 @@ def create_listacontacto(listacontacto: ListaContactoCreate, db: Session = Depen
     return db_listacontacto
 
 # Ruta para obtener una lista de contactos por su ID
-@router.get("/{id_usuario}", response_model=ListaContactoResponse)
+@router.get("/{id_usuario}", response_model=List[ListaContactoResponse])
 def read_listacontacto(id_usuario: int, db: Session = Depends(get_db)):
     listacontacto = db.query(ListaContacto).filter(ListaContacto.id_usuario == id_usuario).all()
     if listacontacto is None:
@@ -28,7 +28,7 @@ def read_listacontacto(id_usuario: int, db: Session = Depends(get_db)):
     return listacontacto
 
 # Ruta para eliminar una lista de contactos por su ID
-@router.delete("/{lista_id}", response_model=List[ListaContactoResponse])
+@router.delete("/{lista_id}", response_model=ListaContactoResponse)
 def delete_listacontacto(lista_id: int, db: Session = Depends(get_db)):
     listacontacto = db.query(ListaContacto).filter(ListaContacto.idlista == lista_id).first()
     if listacontacto is None:
