@@ -29,7 +29,7 @@ def read_listacontacto(id_usuario: int, db: Session = Depends(get_db)):
     result = []
     for lista in listacontacto:
         usuario_correo = lista.usuario_correo
-        usuario = db.query(Usuario).filter(Usuario.correo_usuario == usuario_correo).first()
+        usuario = db.query(Usuario).filter(Usuario.correo_usuario == usuario_correo).all()
         
         if usuario:
             result.append({
