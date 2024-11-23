@@ -20,7 +20,7 @@ def create_forousuario(forousuario: UsuarioHasChatCreate, db: Session = Depends(
     return db_forousuario
 
 # Obtener relación por IDs
-@router.get("/{usuario_id}/{chat_id}", response_model=UsuarioHasChatResponse)
+@router.get("/{usuario_id}", response_model=UsuarioHasChatResponse)
 def read_forousuario(usuario_id: int, db: Session = Depends(get_db)):
     forousuario = db.query(UsuarioHasChat).filter(UsuarioHasChat.usuario_idusuario == usuario_id).first()
     if forousuario is None:
