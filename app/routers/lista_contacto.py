@@ -31,25 +31,24 @@ def read_listacontacto(id_usuario: int, db: Session = Depends(get_db)):
     result = []
     
     for lista in listacontacto:
-        usuario_correo = lista.usuario_correo
-        usuario = db.query(Usuario).filter(Usuario.correo_usuario == usuario_correo).first()  # Usamos first() para obtener solo un usuario
-        
-        # Verificar si se encontró el usuario
+        # Accede a la relación de Usuario directamente desde la relación definida
+        usuario = lista.usuario  # Esto aprovecha la relación ya establecida en el modelo
+
         if usuario:
             result.append({
                 "idlista": lista.idlista,
                 "id_usuario": lista.id_usuario,
                 "usuario_correo": lista.usuario_correo,
-                "usuario_id": usuario.id_usuario,  # ID del usuario encontrado
-                "usuario_nombre": usuario.nombre_usuario  # Nombre del usuario encontrado
+                "usuario_id": usuario.id_usuario,  # El id del usuario relacionado
+                "usuario_nombre": usuario.nombre_usuario  # El nombre del usuario relacionado
             })
         else:
             result.append({
                 "idlista": lista.idlista,
                 "id_usuario": lista.id_usuario,
                 "usuario_correo": lista.usuario_correo,
-                "usuario_id": None,  # No se encuentra el usuario, asignamos None
-                "usuario_nombre": None  # No se encuentra el usuario, asignamos None
+                "usuario_id": None,
+                "usuario_nombre": None
             })
 
     return result
