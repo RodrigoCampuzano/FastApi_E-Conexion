@@ -28,23 +28,15 @@ def read_listacontacto(id_usuario: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Lista de contactos no encontrada")
     result = []
     for lista in listacontacto:
-        usuario = db.query(Usuario).filter(Usuario.correo_usuario == lista.usuario_correo).first()  # Usamos first() para obtener un solo usuario
+        usuario = db.query(Usuario).filter(Usuario.correo_usuario == lista.usuario_correo).first()  
         
-        if usuario:  # Si encontramos el usuario
+        if usuario:  
             result.append({
                 "idlista": lista.idlista,
                 "id_usuario": lista.id_usuario,
                 "usuario_correo": lista.usuario_correo,
-                "usuario_id": usuario.id_usuario,  # ID del usuario
-                "usuario_nombre": usuario.nombre_usuario  # Nombre del usuario
-            })
-        else:  # Si no encontramos un usuario para el correo
-            result.append({
-                "idlista": lista.idlista,
-                "id_usuario": lista.id_usuario,
-                "usuario_correo": lista.usuario_correo,
-                "usuario_id": None,  # Si no se encuentra el usuario
-                "usuario_nombre": None  # Si no se encuentra el usuario
+                "usuario_id": usuario.id_usuario,  
+                "usuario_nombre": usuario.nombre_usuario  
             })
 
     return result
