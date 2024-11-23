@@ -20,9 +20,16 @@ def create_forousuario(forousuario: UsuarioHasChatCreate, db: Session = Depends(
     return db_forousuario
 
 # Obtener relación por IDs
-@router.get("/{usuario_id}", response_model=List[UsuarioHasChatResponse])
+@router.get("usuario/{usuario_id}", response_model=List[UsuarioHasChatResponse])
 def read_forousuario(usuario_id: int, db: Session = Depends(get_db)):
     forousuario = db.query(UsuarioHasChat).filter(UsuarioHasChat.usuario_idusuario == usuario_id).all()
+    if forousuario is None:
+        raise HTTPException(status_code=404, detail="Relación usuario-chat no encontrada")
+    return forousuario
+
+@router.get("chat/{chat_id}", response_model=List[UsuarioHasChatResponse])
+def read_forochat(chat_id: int, db: Session = Depends(get_db)):
+    forousuario = db.query(UsuarioHasChat).filter(UsuarioHasChat.chat_idchat == chat_id).all()
     if forousuario is None:
         raise HTTPException(status_code=404, detail="Relación usuario-chat no encontrada")
     return forousuario
