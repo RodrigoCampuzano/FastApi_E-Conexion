@@ -4,8 +4,8 @@ from typing import Optional
 class UsuarioBase(BaseModel):
     nombre_usuario: str
     apellidos_usuario: str
-    correo_usuario: str
-    contrasena_usuario: str
+    correo_usuario: Optional[str] = None
+    contrasena_usuario: Optional[str] = None
     telefono_usuario: str
     tipo_usuario: str
     imagen_usuario: Optional[str] = None
@@ -23,11 +23,11 @@ class UsuarioCreate(UsuarioBase):
 class UsuarioUpdate(BaseModel):
     nombre_usuario: str
     apellidos_usuario: str
-    correo_usuario: str
-    contrasena_usuario: str
+    correo_usuario: Optional[str] = None
+    contrasena_usuario: Optional[str] = None
     telefono_usuario: str
     tipo_usuario: str
-    imagen_usuario: str
+    imagen_usuario: Optional[str] = None
     estatus: str
 
 class UsuarioResponseUpdate(UsuarioUpdate):

@@ -163,8 +163,8 @@ def update_usuario(
     usuario_id: int,
     nombre_usuario: str = Form(...),
     apellidos_usuario: str = Form(...),
-    correo_usuario: EmailStr = Form(...),
-    contrasena_usuario: str = Form(None),  # Contraseña opcional
+    correo_usuario: EmailStr = Form(None),
+    contrasena_usuario: str = Form(None),  
     telefono_usuario: str = Form(...),
     tipo_usuario: str = Form(...),
     estatus: str = Form(...),
