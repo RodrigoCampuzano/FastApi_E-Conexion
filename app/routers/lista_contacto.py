@@ -12,7 +12,7 @@ router = APIRouter()
 def create_listacontacto(listacontacto: ListaContactoCreate, db: Session = Depends(get_db)):
     db_listacontacto = ListaContacto(
         id_usuario=listacontacto.id_usuario,
-        usuario_idusuario=listacontacto.usuario_idusuario  
+        usuario_correo=listacontacto.usuario_correo  
     )
     db.add(db_listacontacto)
     db.commit()
@@ -46,7 +46,7 @@ def update_lista(lista_id: int, lista_update: ListaContactoUpdate, db: Session =
         raise HTTPException(status_code=404, detail="Lista de contactos no encontrada")
     
     listacontacto.id_usuario = lista_update.id_usuario
-    listacontacto.usuario_idusuario = lista_update.usuario_idusuario  
+    listacontacto.usuario_correo = lista_update.usuario_correo  
     db.commit()  
     db.refresh(listacontacto)  
     return listacontacto

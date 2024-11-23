@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, ForeignKey
+from sqlalchemy import Column, Integer, ForeignKey, String
 from app.db.database import Base
   
 class ListaContacto(Base):
@@ -7,6 +7,6 @@ class ListaContacto(Base):
 
     idlista = Column(Integer, primary_key=True, index=True)
     id_usuario = Column(Integer, nullable=True)
-    usuario_idusuario = Column(Integer, ForeignKey("e_conexion.usuarios.id_usuario"), nullable=True)
+    usuario_correo = Column(String(255), ForeignKey("e_conexion.usuarios.usuario_correo"), nullable=True)
 
 

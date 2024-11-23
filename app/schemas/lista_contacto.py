@@ -2,7 +2,7 @@ from pydantic import BaseModel
 
 class ListaContactoBase(BaseModel):
     id_usuario: int
-    usuario_idusuario: int
+    usuario_correo: str
     
 class ListaContactoResponse(ListaContactoBase):
     idlista: int
@@ -15,7 +15,7 @@ class ListaContactoCreate(ListaContactoBase):
 
 class ListaContactoUpdate(BaseModel):
     id_usuario: int
-    usuario_idusuario: int
+    usuario_correo: str
 
 class ListaContactoResponseUpdate(ListaContactoUpdate):
     idlista: int
