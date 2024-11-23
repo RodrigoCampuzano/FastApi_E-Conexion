@@ -23,34 +23,37 @@ def create_listacontacto(listacontacto: ListaContactoCreate, db: Session = Depen
 # Ruta para obtener una lista de contactos por id del usuario
 @router.get("/{id_usuario}", response_model=List[ListaContactoResponse])
 def read_listacontacto(id_usuario: int, db: Session = Depends(get_db)):
-    listacontacto = db.query(ListaContacto).filter(ListaContacto.id_usuario == id_usuario).all()
-    if not listacontacto:
-        raise HTTPException(status_code=404, detail="Lista de contactos no encontrada")
-    result = []
-    for lista in listacontacto:
-        try:
-            usuario = db.query(Usuario).filter(Usuario.correo_usuario == lista.usuario_correo).first()
-            if usuario: 
-                result.append({
-                    "idlista": lista.idlista,
-                    "id_usuario": lista.id_usuario,
-                    "usuario_correo": lista.usuario_correo,
-                    "usuario_id": usuario.id_usuario,  
-                    "usuario_nombre": usuario.nombre_usuario  
-                })
-            else:  
-                result.append({
-                    "idlista": lista.idlista,
-                    "id_usuario": lista.id_usuario,
-                    "usuario_correo": lista.usuario_correo,
-                    "usuario_id": None,  
-                    "usuario_nombre": None  
-                })
-        except Exception as e:
-            print(f"Error al obtener usuario para correo {lista.usuario_correo}: {e}")
-            raise HTTPException(status_code=500, detail="Error al procesar los datos del usuario")
-    
-    return result
+    try:
+        listacontacto = db.query(
+            Usuario.id_usuario,
+            Usuario.nombre_usuario,
+            ListaContacto.idlista,
+            ListaContacto.id_usuario,
+            ListaContacto.usuario_correo
+        ).join(
+            Usuario, Usuario.correo_usuario == ListaContacto.usuario_correo
+        ).filter(
+            ListaContacto.id_usuario == id_usuario
+        ).all()
+
+        if not listacontacto:
+            raise HTTPException(status_code=404, detail="Lista de contactos no encontrada")
+        result = [
+            {
+                "idlista": lista.idlista,
+                "id_usuario": lista.id_usuario,
+                "usuario_correo": lista.usuario_correo,
+                "usuario_id": lista.id_usuario,
+                "usuario_nombre": lista.nombre_usuario
+            }
+            for lista in listacontacto
+        ]
+
+        return result
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Error al procesar los datos de la lista de contactos")
+
 
 
 # Ruta para eliminar una lista de contactos por su ID
