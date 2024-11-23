@@ -7,6 +7,6 @@ class Chat(Base):
 
     id_chat = Column(Integer, primary_key=True, index=True, autoincrement=True)
     ultimo_msj = Column(String(1000), nullable=False)
-    grupal = Column(Boolean, nullablr=False)
+    grupal = Column(Boolean, nullable=False)
 
 
