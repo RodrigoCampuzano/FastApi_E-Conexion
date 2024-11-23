@@ -48,18 +48,18 @@ def read_listacontacto(id_usuario: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Lista de contactos no encontrada")
 
     # Preparamos el resultado para enviar en la respuesta
-    result = [
-        {
+    result = []
+    for lista in listacontacto:
+        result.append({
             "idlista": lista.idlista,
             "id_usuario": lista.id_usuario,
             "usuario_correo": lista.usuario_correo,
             "usuario_id": lista.usuario_id,  # ID de Usuario de la tabla Usuario
             "usuario_nombre": lista.usuario_nombre  # Nombre de Usuario de la tabla Usuario
-        }
-        for lista in listacontacto
-    ]
+        })
 
     return result
+
 
 
 # Ruta para eliminar una lista de contactos por su ID
