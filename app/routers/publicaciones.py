@@ -45,20 +45,6 @@ def create_publicacion(
     
     return db_publicacion
 
-
-@router.get("/{publicacion_id}", response_model=List[PublicacionesResponse])
-def read_publicaciones_by_user(publicacion_id: int, db: Session = Depends(get_db)):
-    publicacion = db.query(Publicaciones).filter(Publicaciones.id_publicaciones_usuario == publicacion_id).first()
-    if publicacion is None:
-        raise HTTPException(status_code=404, detail="Publicación no encontrada")
-    publicaciones_relacionadas = (
-        db.query(Publicaciones).filter(Publicaciones.id_publicaciones_usuario == publicacion.id_publicaciones_usuario).all()
-    )
-    if not publicaciones_relacionadas:
-        raise HTTPException(status_code=404, detail="No se encontraron publicaciones relacionadas")    
-    return publicaciones_relacionadas
-
-
 @router.delete("/{publicacion_id}", response_model=PublicacionesResponse)
 def delete_publicacion(publicacion_id: int, db: Session = Depends(get_db)):
     publicacion = db.query(Publicaciones).filter(Publicaciones.id_publicaciones == publicacion_id).first()
@@ -121,6 +107,30 @@ def read_all_chats(db: Session = Depends(get_db)):
     if not publicaciones:
         raise HTTPException(status_code=404, detail="No publicaciones encontradas")
     return result
+
+@router.get("/{id_usuario}", response_model=List[PublicacionesResponseconUsuario])
+def read_publicaciones_by_user(id_usuario: int, db: Session = Depends(get_db)):
+    publicacion = db.query(Publicaciones).options(joinedload(Publicaciones.usuario)).filter(Publicaciones.id_publicaciones_usuario == id_usuario).first()
+    if publicacion is None:
+        raise HTTPException(status_code=404, detail="Publicación no encontrada")
+    publicaciones_relacionadas = (
+        db.query(Publicaciones).filter(Publicaciones.id_publicaciones_usuario == publicacion.id_publicaciones_usuario).all()
+    )
+    result = [
+        {
+            "id_publicaciones": pub.id_publicaciones,
+            "id_publicaciones_usuario": pub.id_publicaciones_usuario,
+            "imagen": pub.imagen,
+            "descripcion": pub.descripcion,
+            "fecha": pub.fecha,
+            "titulo": pub.titulo,
+            "nombre_usuario": pub.usuario.nombre_usuario
+        }
+        for pub in publicaciones_relacionadas
+    ]
+    if not publicaciones_relacionadas:
+        raise HTTPException(status_code=404, detail="No se encontraron publicaciones relacionadas")    
+    return publicaciones_relacionadas
 
 @router.get("/publicacionById/{publicacion_id}", response_model = PublicacionesResponse)
 def     read_publicacion_by_id(publicacion_id: int, db: Session =  Depends(get_db)):
