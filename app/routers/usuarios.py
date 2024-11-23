@@ -159,38 +159,49 @@ def delete_usuario(usuario_id: int, db: Session = Depends(get_db)):
     return usuario
 
 @router.put("/{usuario_id}", response_model=UsuarioResponseUpdate)
-async def update_usuario(
+def update_usuario(
     usuario_id: int,
-    usuario_update: UsuarioUpdate,
+    nombre_usuario: str = Form(...),
+    apellidos_usuario: str = Form(...),
+    correo_usuario: EmailStr = Form(...),
+    contrasena_usuario: str = Form(None),  # Contraseña opcional
+    telefono_usuario: str = Form(...),
+    tipo_usuario: str = Form(...),
+    estatus: str = Form(...),
     file: UploadFile = File(None),
     db: Session = Depends(get_db),
 ):
     usuario = db.query(Usuario).filter(Usuario.id_usuario == usuario_id).first()
-    if usuario is None:
+    if not usuario:
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
 
-    if usuario_update.contrasena_usuario:
-        usuario_update.contrasena_usuario = pwd_context.hash(usuario_update.contrasena_usuario)
+    if contrasena_usuario:
+        hashed_password = pwd_context.hash(contrasena_usuario)
+        usuario.contrasena_usuario = hashed_password
 
     if file:
+        if not file.filename.endswith(('.png', '.jpg', '.jpeg')):
+            raise HTTPException(status_code=400, detail="Unsupported file type. Only .png, .jpg, and .jpeg are allowed.")
         if usuario.imagen_usuario and os.path.exists(usuario.imagen_usuario):
             os.remove(usuario.imagen_usuario)
-        new_file_path = f"{UPLOAD_DIRECTORY}/{file.filename}"
-        with open(new_file_path, "wb") as f:
+        file_path = f"{UPLOAD_DIRECTORY}/{file.filename}"
+        with open(file_path, "wb") as f:
             shutil.copyfileobj(file.file, f)
-        usuario.imagen_usuario = new_file_path
+        file_url = f"http://34.197.52.229:8000/uploads/publicaciones/{file.filename}"
+        usuario.imagen_usuario = file_url
 
-    usuario.nombre_usuario = usuario_update.nombre_usuario
-    usuario.apellidos_usuario = usuario_update.apellidos_usuario
-    usuario.correo_usuario = usuario_update.correo_usuario
-    usuario.contrasena_usuario = usuario_update.contrasena_usuario
-    usuario.telefono_usuario = usuario_update.telefono_usuario
-    usuario.tipo_usuario = usuario_update.tipo_usuario
-    usuario.estatus = usuario_update.estatus
+    usuario.nombre_usuario = nombre_usuario
+    usuario.apellidos_usuario = apellidos_usuario
+    usuario.correo_usuario = correo_usuario
+    usuario.telefono_usuario = telefono_usuario
+    usuario.tipo_usuario = tipo_usuario
+    usuario.estatus = estatus
 
     db.commit()
     db.refresh(usuario)
+
     return usuario
+
 
 @router.get("/", response_model=List[UsuarioResponse])
 def read_all_chats(db: Session = Depends(get_db)):
