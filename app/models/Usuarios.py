@@ -17,4 +17,4 @@ class Usuario(Base):
     estatus = Column(String(100), nullable=True)
     
     publicaciones = relationship("Publicaciones", back_populates="usuario")
-    lista = relationship("Lista_contacto", back_populates="usuario")
+    lista = relationship("ListaContacto", back_populates="usuario")
