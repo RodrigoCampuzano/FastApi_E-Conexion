@@ -7,6 +7,6 @@ class ListaContacto(Base):
 
     idlista = Column(Integer, primary_key=True, index=True)
     id_usuario = Column(Integer, nullable=True)
-    usuario_correo = Column(String(255), ForeignKey("e_conexion.usuarios.usuario_correo"), nullable=True)
+    usuario_correo = Column(String(255), ForeignKey("e_conexion.usuarios.correo_usuario"), nullable=True)
 
 
