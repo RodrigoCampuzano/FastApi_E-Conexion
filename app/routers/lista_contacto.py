@@ -22,7 +22,7 @@ def create_listacontacto(listacontacto: ListaContactoCreate, db: Session = Depen
 # Ruta para obtener una lista de contactos por su ID
 @router.get("/{id_usuario}", response_model=ListaContactoResponse)
 def read_listacontacto(id_usuario: int, db: Session = Depends(get_db)):
-    listacontacto = db.query(ListaContacto).filter(ListaContacto.id_usuario == id_usuario).first()
+    listacontacto = db.query(ListaContacto).filter(ListaContacto.id_usuario == id_usuario).all()
     if listacontacto is None:
         raise HTTPException(status_code=404, detail="Lista de contactos no encontrada")
     return listacontacto
