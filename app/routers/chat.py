@@ -12,7 +12,8 @@ router = APIRouter()
 @router.post("/", response_model=ChatResponse)
 def create_chat(chat: ChatCreate, db: Session = Depends(get_db)):
     db_chat = Chat(
-        ultimo_msj=chat.ultimo_msj  
+        ultimo_msj=chat.ultimo_msj,
+        grupal=chat.grupal
     )
     db.add(db_chat)
     db.commit()

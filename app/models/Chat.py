@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, Boolean
 from app.db.database import Base
 
 class Chat(Base):
@@ -7,5 +7,6 @@ class Chat(Base):
 
     id_chat = Column(Integer, primary_key=True, index=True, autoincrement=True)
     ultimo_msj = Column(String(1000), nullable=False)
+    grupal = Column(Boolean, nullablr=False)
 
 
