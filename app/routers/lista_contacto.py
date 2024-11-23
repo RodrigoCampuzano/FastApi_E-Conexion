@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from app.db.dependencies import get_db
 from app.models.Lista_contacto import ListaContacto
 from app.schemas.lista_contacto import ListaContactoCreate, ListaContactoResponse, ListaContactoUpdate, ListaContactoResponseUpdate
@@ -22,10 +22,20 @@ def create_listacontacto(listacontacto: ListaContactoCreate, db: Session = Depen
 # Ruta para obtener una lista de contactos por su ID
 @router.get("/{id_usuario}", response_model=List[ListaContactoResponse])
 def read_listacontacto(id_usuario: int, db: Session = Depends(get_db)):
-    listacontacto = db.query(ListaContacto).filter(ListaContacto.id_usuario == id_usuario).all()
+    listacontacto = db.query(ListaContacto).options(joinedload(ListaContacto.usuario)).filter(ListaContacto.id_usuario == id_usuario).all()
+    result = [
+        {
+            "idlista": lista.idlista,
+            "id_usuario": lista.id_usuario,
+            "usuario_correo": lista.usuario_correo,
+            "usuario_id": lista.usuario.id_usuario,
+            "usuario_nombre": lista.usuario.nombre_usuario
+        }
+        for lista in listacontacto
+    ]
     if listacontacto is None:
         raise HTTPException(status_code=404, detail="Lista de contactos no encontrada")
-    return listacontacto
+    return result
 
 # Ruta para eliminar una lista de contactos por su ID
 @router.delete("/{lista_id}", response_model=ListaContactoResponse)
@@ -37,6 +47,7 @@ def delete_listacontacto(lista_id: int, db: Session = Depends(get_db)):
     db.delete(listacontacto)
     db.commit()  
     return listacontacto
+
 
 # Ruta para actualizar una lista de contactos por su ID
 @router.put("/{lista_id}", response_model=ListaContactoResponseUpdate)
