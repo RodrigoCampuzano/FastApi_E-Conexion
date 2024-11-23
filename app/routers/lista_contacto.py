@@ -20,9 +20,9 @@ def create_listacontacto(listacontacto: ListaContactoCreate, db: Session = Depen
     return db_listacontacto
 
 # Ruta para obtener una lista de contactos por su ID
-@router.get("/{lista_id}", response_model=ListaContactoResponse)
-def read_listacontacto(lista_id: int, db: Session = Depends(get_db)):
-    listacontacto = db.query(ListaContacto).filter(ListaContacto.idlista == lista_id).first()
+@router.get("/{id_usuario}", response_model=ListaContactoResponse)
+def read_listacontacto(id_usuario: int, db: Session = Depends(get_db)):
+    listacontacto = db.query(ListaContacto).filter(ListaContacto.id_usuario == id_usuario).first()
     if listacontacto is None:
         raise HTTPException(status_code=404, detail="Lista de contactos no encontrada")
     return listacontacto
