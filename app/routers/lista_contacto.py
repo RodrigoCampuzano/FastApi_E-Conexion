@@ -24,23 +24,20 @@ def create_listacontacto(listacontacto: ListaContactoCreate, db: Session = Depen
 @router.get("/{id_usuario}", response_model=List[ListaContactoResponse])
 def read_listacontacto(id_usuario: int, db: Session = Depends(get_db)):
     listacontacto = db.query(ListaContacto).filter(ListaContacto.id_usuario == id_usuario).all()
-
     if not listacontacto:
         raise HTTPException(status_code=404, detail="Lista de contactos no encontrada")
     
     result = []
     
     for lista in listacontacto:
-        # Accede a la relación de Usuario directamente desde la relación definida
-        usuario = lista.usuario  # Esto aprovecha la relación ya establecida en el modelo
-
+        usuario = lista.usuario 
         if usuario:
             result.append({
                 "idlista": lista.idlista,
                 "id_usuario": lista.id_usuario,
                 "usuario_correo": lista.usuario_correo,
-                "usuario_id": usuario.id_usuario,  # El id del usuario relacionado
-                "usuario_nombre": usuario.nombre_usuario  # El nombre del usuario relacionado
+                "usuario_id": usuario.id_usuario,  
+                "usuario_nombre": usuario.nombre_usuario  
             })
         else:
             result.append({
