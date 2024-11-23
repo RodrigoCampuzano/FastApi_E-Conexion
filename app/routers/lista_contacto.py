@@ -23,44 +23,44 @@ def create_listacontacto(listacontacto: ListaContactoCreate, db: Session = Depen
 # Ruta para obtener una lista de contactos por id del usuario
 @router.get("/{id_usuario}", response_model=List[ListaContactoResponse])
 def read_listacontacto(id_usuario: int, db: Session = Depends(get_db)):
-    # Obtenemos los correos relacionados con el id_usuario
+    # Primero obtenemos todos los correos asociados con el id_usuario de la lista de contactos
     correos = db.query(ListaContacto.usuario_correo).filter(ListaContacto.id_usuario == id_usuario).all()
-    correos = [correo[0] for correo in correos]  # Extraemos solo los correos
-
+    
     if not correos:
         raise HTTPException(status_code=404, detail="No hay correos en la lista de contactos")
+    
+    # Extraemos solo los correos (los obtenemos como una lista de tuplas, así que seleccionamos el primer elemento)
+    correos = [correo[0] for correo in correos]
 
-    # Realizamos la consulta con el JOIN entre ListaContacto y Usuario
+    # Realizamos la consulta usando la cláusula IN para obtener los usuarios asociados a esos correos
     listacontacto = db.query(
         ListaContacto.idlista,
         ListaContacto.id_usuario,
         ListaContacto.usuario_correo,
-        Usuario.id_usuario.label("usuario_id"),
-        Usuario.nombre_usuario.label("usuario_nombre")
+        Usuario.id_usuario.label("usuario_id"),  # Alias para el id_usuario de Usuario
+        Usuario.nombre_usuario.label("usuario_nombre")  # Alias para nombre_usuario de Usuario
     ).join(
         Usuario, Usuario.correo_usuario == ListaContacto.usuario_correo
     ).filter(
-        Usuario.correo_usuario.in_(correos)  # Filtramos los correos obtenidos
+        ListaContacto.id_usuario == id_usuario,
+        Usuario.correo_usuario.in_(correos)  # Usamos la cláusula IN para todos los correos
     ).all()
 
     if not listacontacto:
         raise HTTPException(status_code=404, detail="Lista de contactos no encontrada")
 
-    # Preparamos la respuesta para devolver
+    # Preparamos el resultado para enviar en la respuesta
     result = []
     for lista in listacontacto:
         result.append({
             "idlista": lista.idlista,
             "id_usuario": lista.id_usuario,
             "usuario_correo": lista.usuario_correo,
-            "usuario_id": lista.usuario_id,  # ID del usuario desde la tabla Usuario
-            "usuario_nombre": lista.usuario_nombre  # Nombre del usuario desde la tabla Usuario
+            "usuario_id": lista.usuario_id,  # ID del usuario
+            "usuario_nombre": lista.usuario_nombre  # Nombre del usuario
         })
 
     return result
-
-
-
 
 # Ruta para eliminar una lista de contactos por su ID
 @router.delete("/{lista_id}", response_model=ListaContactoResponse)
