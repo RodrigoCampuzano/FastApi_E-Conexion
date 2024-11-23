@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, ForeignKey
 
 from app.db.database import Base
 
-class ForoListaUsuario(Base):
+class UsuarioHasChat(Base):
     __tablename__ = "usuario_has_chat"
     __table_args__= {"schema": "e_conexion"}
 
