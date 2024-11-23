@@ -23,7 +23,6 @@ class UsuarioCreate(UsuarioBase):
 class UsuarioUpdate(BaseModel):
     nombre_usuario: str
     apellidos_usuario: str
-    correo_usuario: Optional[str] = None
     contrasena_usuario: Optional[str] = None
     telefono_usuario: str
     tipo_usuario: str
