@@ -26,30 +26,28 @@ def read_listacontacto(id_usuario: int, db: Session = Depends(get_db)):
     listacontacto = db.query(ListaContacto).filter(ListaContacto.id_usuario == id_usuario).all()
     if not listacontacto:
         raise HTTPException(status_code=404, detail="Lista de contactos no encontrada")
-    
     result = []
-    
     for lista in listacontacto:
-        usuario = lista.usuario 
-        if usuario:
+        usuario = db.query(Usuario).filter(Usuario.correo_usuario == lista.usuario_correo).first()  # Usamos first() para obtener un solo usuario
+        
+        if usuario:  # Si encontramos el usuario
             result.append({
                 "idlista": lista.idlista,
                 "id_usuario": lista.id_usuario,
                 "usuario_correo": lista.usuario_correo,
-                "usuario_id": usuario.id_usuario,  
-                "usuario_nombre": usuario.nombre_usuario  
+                "usuario_id": usuario.id_usuario,  # ID del usuario
+                "usuario_nombre": usuario.nombre_usuario  # Nombre del usuario
             })
-        else:
+        else:  # Si no encontramos un usuario para el correo
             result.append({
                 "idlista": lista.idlista,
                 "id_usuario": lista.id_usuario,
                 "usuario_correo": lista.usuario_correo,
-                "usuario_id": None,
-                "usuario_nombre": None
+                "usuario_id": None,  # Si no se encuentra el usuario
+                "usuario_nombre": None  # Si no se encuentra el usuario
             })
 
     return result
-
 
 # Ruta para eliminar una lista de contactos por su ID
 @router.delete("/{lista_id}", response_model=ListaContactoResponse)
