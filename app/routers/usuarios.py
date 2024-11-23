@@ -163,11 +163,10 @@ def update_usuario(
     usuario_id: int,
     nombre_usuario: str = Form(...),
     apellidos_usuario: str = Form(...),
-    contrasena_usuario: str = Form(None),
+    contrasena_usuario: str = Form(None),  
     telefono_usuario: str = Form(...),
     tipo_usuario: str = Form(...),
     estatus: str = Form(...),
-    correo_usuario: str = Form(None), 
     file: UploadFile = File(None),
     db: Session = Depends(get_db),
 ):
@@ -179,21 +178,17 @@ def update_usuario(
         hashed_password = pwd_context.hash(contrasena_usuario)
         usuario.contrasena_usuario = hashed_password
 
-    if correo_usuario:
-        usuario.correo_usuario = correo_usuario
-
     if file:
         if not file.filename.endswith(('.png', '.jpg', '.jpeg')):
             raise HTTPException(status_code=400, detail="Unsupported file type. Only .png, .jpg, and .jpeg are allowed.")
         if usuario.imagen_usuario and os.path.exists(usuario.imagen_usuario):
-            os.remove(usuario.imagen_usuario)  # Eliminar la imagen anterior
+            os.remove(usuario.imagen_usuario)
         file_path = f"{UPLOAD_DIRECTORY}/{file.filename}"
         with open(file_path, "wb") as f:
             shutil.copyfileobj(file.file, f)
         file_url = f"http://34.197.52.229:8000/uploads/publicaciones/{file.filename}"
         usuario.imagen_usuario = file_url
 
-    # Actualizar los otros campos
     usuario.nombre_usuario = nombre_usuario
     usuario.apellidos_usuario = apellidos_usuario
     usuario.telefono_usuario = telefono_usuario
@@ -204,6 +199,7 @@ def update_usuario(
     db.refresh(usuario)
 
     return usuario
+
 
 
 
