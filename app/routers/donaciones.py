@@ -44,7 +44,7 @@ def read_donaciones_by_user(usuario_id: int, db: Session = Depends(get_db)):
     donacion = db.query(Donaciones).filter(Donaciones.id_donacion_usuario == usuario_id).all()
     if donacion is None:
         raise HTTPException(status_code=404, detail="Donación no encontrada")
-    return donaciones_relacionadas
+    return donacion
 
 @router.delete("/{donaciones_id}", response_model=DonacionesResponse)
 def delete_donaciones(donaciones_id: int, db: Session = Depends(get_db)):
