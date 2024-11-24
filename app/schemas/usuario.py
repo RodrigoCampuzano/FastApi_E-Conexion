@@ -10,6 +10,7 @@ class UsuarioBase(BaseModel):
     tipo_usuario: str
     imagen_usuario: Optional[str] = None
     estatus: str
+    descripcion: Optional[str] =None
 
 class UsuarioResponse(UsuarioBase):
     id_usuario: int
@@ -28,6 +29,7 @@ class UsuarioUpdate(BaseModel):
     tipo_usuario: str
     imagen_usuario: Optional[str] = None
     estatus: str
+    descripcion: Optional[str] =None
 
 class UsuarioResponseUpdate(UsuarioUpdate):
     id_usuario: int

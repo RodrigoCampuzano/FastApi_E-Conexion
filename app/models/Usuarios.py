@@ -15,6 +15,7 @@ class Usuario(Base):
     tipo_usuario = Column(String(255), nullable=True)
     imagen_usuario = Column(String(255), nullable=False)
     estatus = Column(String(100), nullable=True)
+    descripcion = Column(String(600), nullable=False)
     
     publicaciones = relationship("Publicaciones", back_populates="usuario")
     lista = relationship("ListaContacto", back_populates="usuario")

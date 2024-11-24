@@ -40,6 +40,7 @@ def register_usuario(
     tipo_usuario: str = Form(...),
     estatus: str = Form(...),
     file: UploadFile = File(None),
+    descripcion: str = Form(...),
     db: Session = Depends(get_db)
 ):
     existing_user = db.query(Usuario).filter(Usuario.correo_usuario == correo_usuario).first()
@@ -67,6 +68,7 @@ def register_usuario(
         tipo_usuario=tipo_usuario,
         imagen_usuario=file_url,  
         estatus=estatus,
+        descripcion=descripcion
     )
 
     db.add(new_usuario)
@@ -93,43 +95,6 @@ def login_usuario(
         "id_usuario": str(usuario.id_usuario),
         "access_token": access_token
     }
-
-@router.post("/", response_model=UsuarioResponse)
-def create_usuario(
-    nombre_usuario: str = Form(...),
-    apellidos_usuario: str = Form(...),
-    correo_usuario: EmailStr = Form(...),  
-    contrasena_usuario: str = Form(...),
-    telefono_usuario: str = Form(...),
-    tipo_usuario: str = Form(...),
-    estatus: str = Form(...),
-    file: UploadFile = File(None),
-    db: Session = Depends(get_db)
-):
-    if file:
-        if not file.filename.endswith(('.png', '.jpg', '.jpeg')):
-            raise HTTPException(status_code=400, detail="Unsupported file type. Only .png, .jpg, and .jpeg are allowed.")
-        file_path = f"{UPLOAD_DIRECTORY}/{file.filename}"
-        with open(file_path, "wb") as f:
-            shutil.copyfileobj(file.file, f)
-        file_url = f"http://34.197.52.229:8000/uploads/publicaciones/{file.filename}"
-    else:
-        file_url = None 
-    db_usuario = Usuario(
-        nombre_usuario=nombre_usuario,
-        apellidos_usuario=apellidos_usuario,
-        correo_usuario=correo_usuario,
-        contrasena_usuario=contrasena_usuario,
-        telefono_usuario=telefono_usuario,
-        tipo_usuario=tipo_usuario,
-        imagen_usuario=file_url,
-        estatus=estatus
-    )
-    db.add(db_usuario)
-    db.commit()
-    db.refresh(db_usuario)
-    
-    return db_usuario
 
 @router.get("/{usuario_id}", response_model=UsuarioResponse)
 def read_usuario(usuario_id: int, db: Session = Depends(get_db)):
@@ -168,6 +133,7 @@ def update_usuario(
     tipo_usuario: str = Form(...),
     estatus: str = Form(...),
     file: UploadFile = File(None),
+    descripcion: str = Form(...),
     db: Session = Depends(get_db),
 ):
     usuario = db.query(Usuario).filter(Usuario.id_usuario == usuario_id).first()
@@ -194,6 +160,7 @@ def update_usuario(
     usuario.telefono_usuario = telefono_usuario
     usuario.tipo_usuario = tipo_usuario
     usuario.estatus = estatus
+    usuario.descripcion=descripcion
 
     db.commit()
     db.refresh(usuario)
