@@ -30,7 +30,7 @@ def read_donacionesid(donaciones_id: int, db : Session = Depends(get_db)):
     return donaciones
 
 @router.get("/donaciones/{donaciones_id}", response_model=List[DonacionesResponse])
-def read_donaciones_by_user(donaciones_id: int, db: Session = Depends(get_db)):
+def read_donaciones_byID(donaciones_id: int, db: Session = Depends(get_db)):
     donacion = db.query(Donaciones).filter(Donaciones.id_donaciones == donaciones_id).first()
     if donacion is None:
         raise HTTPException(status_code=404, detail="Donación no encontrada")
@@ -39,6 +39,15 @@ def read_donaciones_by_user(donaciones_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="No se encontraron donaciones relacionadas")
     return donaciones_relacionadas
 
+@router.get("/donaciones_by_user/{usuario_id}", response_model=List[DonacionesResponse])
+def read_donaciones_by_user(usuario_id: int, db: Session = Depends(get_db)):
+    donacion = db.query(Donaciones).filter(Donaciones.id_donacion_usuario == usuario_id).all()
+    if donacion is None:
+        raise HTTPException(status_code=404, detail="Donación no encontrada")
+    donaciones_relacionadas = (db.query(Donaciones).filter(Donaciones.id_donacion_usuario == donacion.id_donacion_usuario).all())    
+    if not donaciones_relacionadas:
+        raise HTTPException(status_code=404, detail="No se encontraron donaciones relacionadas")
+    return donaciones_relacionadas
 
 @router.delete("/{donaciones_id}", response_model=DonacionesResponse)
 def delete_donaciones(donaciones_id: int, db: Session = Depends(get_db)):
