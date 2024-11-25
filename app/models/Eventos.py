@@ -5,7 +5,7 @@ from app.db.database import Base
 
 class Eventos(Base):
     __tablename__ = "eventos"
-    __table_args__= {"schema": "e_conexion"}
+    __table_args__ = {"schema": "e_conexion"}
 
     id_eventos = Column(Integer, primary_key=True, index=True, autoincrement=True)
     id_evento_usuario = Column(Integer, ForeignKey("e_conexion.usuarios.id_usuario"), nullable=True, index=True)
@@ -19,5 +19,6 @@ class Eventos(Base):
     ubicacion = Column(String(500), nullable=True)
     estatus_donacion = Column(String(100), nullable=True)
     estatus_donador = Column(String(100), nullable=True)
-    
-    usuario = relationship("Usuario", back_populates="eventos")
+
+    usuario = relationship("Usuario", foreign_keys=[id_evento_usuario], back_populates="eventos")
+    organizador = relationship("Usuario", foreign_keys=[id_organizador], back_populates="eventos_as_organizer")

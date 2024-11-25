@@ -100,7 +100,11 @@ def update_evento(evento_id: int, evento_update: EventoUpdate, db: Session = Dep
 
 @router.get("/", response_model=List[EventoResponse])
 def read_all_eventos(db: Session = Depends(get_db)):
-    eventos = db.query(Eventos).options(joinedload(Eventos.usuario)).all()
+    eventos = db.query(Eventos).options(joinedload(Eventos.usuario),joinedload(Eventos.organizador)).all()
+
+    if not eventos:
+        raise HTTPException(status_code=404, detail="No events found")
+    db.execute(text("SELECT actualizar_estatus_eventos();"))
     result = [
         {
             "id_eventos": evnt.id_eventos,
@@ -109,19 +113,18 @@ def read_all_eventos(db: Session = Depends(get_db)):
             "id_donacion": evnt.id_donacion,
             "descripcion": evnt.descripcion,
             "fecha_creacion": evnt.fecha_creacion,
-            "fecha_termino": evnt.fecha_termino ,
+            "fecha_termino": evnt.fecha_termino,
             "estatus": evnt.estatus,
-            "nombre" : evnt.nombre,
+            "nombre": evnt.nombre,
             "ubicacion": evnt.ubicacion,
             "estatus_donacion": evnt.estatus_donacion,
             "estatus_donador": evnt.estatus_donador,
-            "nombre_organizador": evnt.usuario.nombre_usuario
+            "nombre_organizador": evnt.organizador.nombre_usuario if evnt.organizador else None,
         }
         for evnt in eventos
     ]
-    if not eventos:
-        raise HTTPException(status_code=404, detail="No chats found")
-    db.execute(text("SELECT actualizar_estatus_eventos();"))
-    return eventos
+
+    return result
+
 
 
