@@ -32,10 +32,10 @@ def read_foroid(foro_id: int, db: Session = Depends(get_db)):
 
 @router.get("/{chatforo_id}", response_model=ForoResponse)
 def read_chatid(chatforo_id: int, db: Session = Depends(get_db)):
-    foro = db.query(Foro).filter(Foro.id_chat == chatforo_id).first()
-    if foro is None:
+    forochat = db.query(Foro).filter(Foro.id_chat == chatforo_id).first()
+    if forochat is None:
         raise HTTPException(status_code=404, detail="Foro no encontrado")
-    return foro
+    return forochat
 
 
 # Ruta para eliminar un foro por su ID
