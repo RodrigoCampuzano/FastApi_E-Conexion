@@ -11,15 +11,16 @@ router = APIRouter()
 
 @router.post("/", response_model=ForoResponse)
 def create_foro(foro: ForoCreate, db: Session = Depends(get_db)):
-    # Validar claves foráneas
+    # Verificar que el chat exista
     chat_exists = db.query(Chat).filter(Chat.id_chat == foro.id_chat).first()
     if not chat_exists:
         raise HTTPException(status_code=400, detail="Chat no encontrado.")
     
+    # Verificar que el usuario exista
     usuario_exists = db.query(Usuario).filter(Usuario.id_usuario == foro.id_usuario).first()
     if not usuario_exists:
         raise HTTPException(status_code=400, detail="Usuario no encontrado.")
-
+    
     try:
         db_for = Foro(
             id_chat=foro.id_chat,
@@ -28,12 +29,14 @@ def create_foro(foro: ForoCreate, db: Session = Depends(get_db)):
             id_usuario=foro.id_usuario
         )
         db.add(db_for)
-        db.commit()  # Realizamos el commit
-        db.refresh(db_for)  # Refrescamos para obtener el id generado
+        db.flush()  # Realizamos un flush en lugar de commit
+        db.refresh(db_for)  # Refrescamos el objeto
+        db.commit()  # Ahora confirmamos la transacción
         return db_for
     except Exception as e:
-        db.rollback()  # Realizamos un rollback si algo falla
+        db.rollback()  # Si ocurre un error, realizamos un rollback
         raise HTTPException(status_code=500, detail=f"Error al crear el foro: {str(e)}")
+
 
 
 # Ruta para leer un foro por su ID
