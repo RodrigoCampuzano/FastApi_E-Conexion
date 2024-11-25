@@ -4,6 +4,7 @@ class ForoBase(BaseModel):
     id_chat: int
     nombre_foro: str
     descripcion: str
+    id_usuario: int
 
 class ForoResponse(ForoBase):
     id_foro: int

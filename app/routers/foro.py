@@ -13,7 +13,8 @@ def create_foro(foro: ForoCreate, db: Session = Depends(get_db)):
     db_foro = Foro(
         id_chat=foro.id_chat,  
         nombre_foro=foro.nombre_foro,
-        descripcion=foro.descripcion
+        descripcion=foro.descripcion,
+        id_usuario=foro.id_usuario
     )
     db.add(db_foro)
     db.commit()
