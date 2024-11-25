@@ -29,15 +29,6 @@ def read_foroid(foro_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Foro no encontrado")
     return foro
 
-
-@router.get("/{chatforo_id}", response_model=ForoResponse)
-def read_chatid(chatforo_id: int, db: Session = Depends(get_db)):
-    forochat = db.query(Foro).filter(Foro.id_chat == chatforo_id).first()
-    if forochat is None:
-        raise HTTPException(status_code=404, detail="Foro no encontrado")
-    return forochat
-
-
 # Ruta para eliminar un foro por su ID
 @router.delete("/{foro_id}", response_model=ForoResponse)
 def delete_foro(foro_id: int, db: Session = Depends(get_db)):
@@ -69,3 +60,11 @@ def read_all_foros(db: Session = Depends(get_db)):
     if not foros:
         raise HTTPException(status_code=404, detail="No foros encontrados")
     return foros
+
+
+@router.get("/{chatforo_id}", response_model=List[ForoResponse])
+def read_chatid(chatforo_id: int, db: Session = Depends(get_db)):
+    forochat = db.query(Foro).filter(Foro.id_chat == chatforo_id).all()
+    if forochat is None:
+        raise HTTPException(status_code=404, detail="Foro no encontrado")
+    return forochat
