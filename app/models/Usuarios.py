@@ -19,3 +19,4 @@ class Usuario(Base):
     
     publicaciones = relationship("Publicaciones", back_populates="usuario")
     lista = relationship("ListaContacto", back_populates="usuario")
+    eventos = relationship("Eventos", back_populates="usuario")

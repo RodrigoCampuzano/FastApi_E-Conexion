@@ -19,3 +19,5 @@ class Eventos(Base):
     ubicacion = Column(String(500), nullable=True)
     estatus_donacion = Column(String(100), nullable=True)
     estatus_donador = Column(String(100), nullable=True)
+    
+    usuario = relationship("Usuario", back_populates="eventos")

@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from app.db.dependencies import get_db
 from app.models.Eventos import Eventos
 from app.schemas.eventos import EventoCreate, EventoResponse, EventoUpdate, EventoResponseUpdate
@@ -99,10 +99,29 @@ def update_evento(evento_id: int, evento_update: EventoUpdate, db: Session = Dep
 
 
 @router.get("/", response_model=List[EventoResponse])
-def read_all_chats(db: Session = Depends(get_db)):
-    chats = db.query(Eventos).all()
-    if not chats:
+def read_all_eventos(db: Session = Depends(get_db)):
+    eventos = db.query(Eventos).options(joinedload(Eventos.usuario)).all()
+    result = [
+        {
+            "id_eventos": evnt.id_eventos,
+            "id_evento_usuario": evnt.id_evento_usuario,
+            "id_organizador": evnt.id_organizador,
+            "id_donacion": evnt.id_donacion,
+            "descripcion": evnt.descripcion,
+            "fecha_creacion": evnt.fecha_creacion,
+            "fecha_termino": evnt.fecha_termino ,
+            "estatus": evnt.estatus,
+            "nombre" : evnt.nombre,
+            "ubicacion": evnt.ubicacion,
+            "estatus_donacion": evnt.estatus_donacion,
+            "estatus_donador": evnt.estatus_donador,
+            "nombre_organizador": evnt.usuario.nombre_usuario
+        }
+        for evnt in eventos
+    ]
+    if not eventos:
         raise HTTPException(status_code=404, detail="No chats found")
     db.execute(text("SELECT actualizar_estatus_eventos();"))
-    db.commit()
-    return chats
+    return eventos
+
+
