@@ -32,7 +32,7 @@ def read_foroid(foro_id: int, db: Session = Depends(get_db)):
 
 @router.get("/{chat_id}", response_model=ForoResponse)
 def read_foro_chatid(chat_id: int, db: Session = Depends(get_db)):
-    foro = db.query(Foro).filter(Foro.id_foro == chat_id).first()
+    foro = db.query(Foro).filter(Foro.id_chat == chat_id).first()
     if foro is None:
         raise HTTPException(status_code=404, detail="Foro no encontrado")
     return foro
