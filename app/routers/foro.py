@@ -2,27 +2,37 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.db.dependencies import get_db
 from app.models.Foro import Foro
+from app.models.Usuarios import Usuario
+from app.models.Chat import Chat
 from app.schemas.foro import ForoCreate, ForoResponse, ForoUpdate, ForoResponseUpdate
 from typing import List
 
 router = APIRouter()
 
-# Ruta para crear un foro
 @router.post("/", response_model=ForoResponse)
 def create_foro(foro: ForoCreate, db: Session = Depends(get_db)):
+    # Validar claves foráneas
+    chat_exists = db.query(Chat).filter(Chat.id_chat == foro.id_chat).first()
+    if not chat_exists:
+        raise HTTPException(status_code=400, detail="Chat no encontrado.")
+    
+    usuario_exists = db.query(Usuario).filter(Usuario.id_usuario == foro.id_usuario).first()
+    if not usuario_exists:
+        raise HTTPException(status_code=400, detail="Usuario no encontrado.")
+
     try:
         db_for = Foro(
-            id_chat=foro.id_chat,  
+            id_chat=foro.id_chat,
             nombre_foro=foro.nombre_foro,
             descripcion=foro.descripcion,
             id_usuario=foro.id_usuario
         )
         db.add(db_for)
-        db.commit()
-        db.refresh(db_for)
+        db.commit()  # Realizamos el commit
+        db.refresh(db_for)  # Refrescamos para obtener el id generado
         return db_for
     except Exception as e:
-        db.rollback()
+        db.rollback()  # Realizamos un rollback si algo falla
         raise HTTPException(status_code=500, detail=f"Error al crear el foro: {str(e)}")
 
 
