@@ -22,7 +22,7 @@ def create_foro(foro: ForoCreate, db: Session = Depends(get_db)):
     return db_foro
 
 # Ruta para leer un foro por su ID
-@router.get("/{chat_id}", response_model=ForoResponse)
+@router.get("chat/{chat_id}", response_model=ForoResponse)
 def read_foro_chatid(chat_id: int, db: Session = Depends(get_db)):
     foro = db.query(Foro).filter(Foro.id_chat == chat_id).first()
     if foro is None:
@@ -62,7 +62,7 @@ def read_all_foros(db: Session = Depends(get_db)):
     return foros
 
 
-@router.get("/{foro_id}", response_model=ForoResponse)
+@router.get("foro/{foro_id}", response_model=ForoResponse)
 def read_foroid(foro_id: int, db: Session = Depends(get_db)):
     forochat = db.query(Foro).filter(Foro.id_foro == foro_id).first()
     if forochat is None:
