@@ -62,9 +62,9 @@ def read_all_foros(db: Session = Depends(get_db)):
     return foros
 
 
-@router.get("/{foro_id}", response_model=List[ForoResponse])
+@router.get("/{foro_id}", response_model=ForoResponse)
 def read_foroid(foro_id: int, db: Session = Depends(get_db)):
-    forochat = db.query(Foro).filter(Foro.id_foro == foro_id).all()
+    forochat = db.query(Foro).filter(Foro.id_foro == foro_id).first()
     if forochat is None:
         raise HTTPException(status_code=404, detail="Foro no encontrado")
     return forochat
