@@ -10,16 +10,21 @@ router = APIRouter()
 # Ruta para crear un foro
 @router.post("/", response_model=ForoResponse)
 def create_foro(foro: ForoCreate, db: Session = Depends(get_db)):
-    db_for = Foro(
-        id_chat=foro.id_chat,  
-        nombre_foro=foro.nombre_foro,
-        descripcion=foro.descripcion,
-        id_usuario=foro.id_usuario
-    )
-    db.add(db_for)
-    db.commit()
-    db.refresh(db_for)  
-    return db_for
+    try:
+        db_for = Foro(
+            id_chat=foro.id_chat,  
+            nombre_foro=foro.nombre_foro,
+            descripcion=foro.descripcion,
+            id_usuario=foro.id_usuario
+        )
+        db.add(db_for)
+        db.commit()
+        db.refresh(db_for)
+        return db_for
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Error al crear el foro: {str(e)}")
+
 
 # Ruta para leer un foro por su ID
 @router.get("/{foro_id}", response_model=ForoResponse)

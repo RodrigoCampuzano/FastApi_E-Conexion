@@ -10,6 +10,6 @@ class Foro(Base):
     id_chat = Column(Integer, ForeignKey("e_conexion.chat.id_chat"), primary_key=True)
     nombre_foro = Column(String(255), nullable=True)
     descripcion = Column(String(255), nullable=False)
-    id_usuario = Column(Integer, ForeignKey("e_conexion.usuarios.id_usuario"), nullable=True)
+    id_usuario = Column(Integer, ForeignKey("e_conexion.usuarios.id_usuario"), nullable=False)
 
 
