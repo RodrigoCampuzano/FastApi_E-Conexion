@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session, joinedload
 from app.db.auth import verify_token
+from app.db.dependencies import get_db
 from app.models.Eventos import Eventos
 from app.schemas.eventos import EventoCreate, EventoResponse, EventoUpdate, EventoResponseUpdate
 from typing import List
