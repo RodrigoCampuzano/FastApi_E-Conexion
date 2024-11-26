@@ -58,35 +58,34 @@ def delete_publicacion(publicacion_id: int, db: Session = Depends(get_db)):
 @router.put("/{publicacion_id}", response_model=PublicacionesResponseUpdate)
 def update_publicacion(
     publicacion_id: int,
-    publicacion_update: PublicacionesUpdate,
+    titulo: str = Form(None),
+    descripcion: str = Form(None),
     file: UploadFile = File(None),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
-    # Buscar la publicación en la base de datos
     publicacion = db.query(Publicaciones).filter(Publicaciones.id_publicaciones == publicacion_id).first()
-    if publicacion is None:
+    if not publicacion:
         raise HTTPException(status_code=404, detail="Publicación no encontrada")
-    
-    # Actualizar la imagen si se proporciona un archivo
+
     if file:
+        if not file.filename.endswith(('.png', '.jpg', '.jpeg')):
+            raise HTTPException(status_code=400, detail="Tipo de archivo no soportado. Solo se permiten .png, .jpg y .jpeg.")
+        
         if publicacion.imagen and os.path.exists(publicacion.imagen):
             os.remove(publicacion.imagen)
         
-        new_file_path = f"{UPLOAD_DIRECTORY}/{file.filename}"
-        with open(new_file_path, "wb") as f:
-            shutil.copyfileobj(file.file, f)
-        
+        file_path = f"{UPLOAD_DIRECTORY}/{file.filename}"
+        with open(file_path, "wb") as f:
+            shutil.copyfileobj(file.file, f)        
         publicacion.imagen = f"http://34.197.52.229:8000/uploads/publicaciones/{file.filename}"
-    
-    if publicacion_update.descripcion is not None:
-        publicacion.descripcion = publicacion_update.descripcion
-    
-    if publicacion_update.titulo is not None:
-        publicacion.titulo = publicacion_update.titulo
-    
+
+    if titulo is not None:
+        publicacion.titulo = titulo
+    if descripcion is not None:
+        publicacion.descripcion = descripcion
     db.commit()
     db.refresh(publicacion)
-    
+
     return publicacion
 
 
