@@ -1,7 +1,7 @@
 import jwt
 from fastapi import APIRouter, Depends, HTTPException, File, UploadFile, Form
 from passlib.context import CryptContext
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from app.db.dependencies import get_db
 from app.models.Usuarios import Usuario
 from app.models.Publicaciones import Publicaciones
@@ -100,9 +100,22 @@ def login_usuario(
 @router.get("/{usuario_id}", response_model=UsuarioResponse, dependencies=[Depends(verify_token)])
 def read_usuario(usuario_id: int, db: Session = Depends(get_db)):
     usuario = db.query(Usuario).filter(Usuario.id_usuario == usuario_id).first()
+    
     if usuario is None:
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
-    return usuario
+    
+    result = {
+        "nombre_usuario": usuario.nombre_usuario,
+        "apellidos_usuario": usuario.apellidos_usuario,
+        "correo_usuario": usuario.correo_usuario,
+        "telefono_usuario": usuario.telefono_usuario,
+        "tipo_usuario": usuario.tipo_usuario,
+        "imagen_usuario": usuario.imagen_usuario,
+        "estatus": usuario.estatus,
+        "descripcion": usuario.descripcion
+    }
+    
+    return result
 
 @router.delete("/{usuario_id}", response_model=UsuarioResponse, dependencies=[Depends(verify_token)])
 def delete_usuario(usuario_id: int, db: Session = Depends(get_db)):
