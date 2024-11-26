@@ -10,7 +10,7 @@ from typing import List
 router = APIRouter()
 
 # Ruta para crear un chat
-@router.post("/", response_model=ChatResponse, dependencies=[Depends(verify_token)])
+@router.post("/", response_model=ChatResponse)
 def create_chat(chat: ChatCreate, db: Session = Depends(get_db)):
     db_chat = Chat(
         ultimo_msj=chat.ultimo_msj,
@@ -23,7 +23,7 @@ def create_chat(chat: ChatCreate, db: Session = Depends(get_db)):
 
 
 # Ruta para leer un chat por su ID
-@router.get("/{chat_id}", response_model=ChatResponse, dependencies=[Depends(verify_token)])
+@router.get("/{chat_id}", response_model=ChatResponse)
 def read_chatid(chat_id: int, db: Session = Depends(get_db)):
     chat = db.query(Chat).filter(Chat.id_chat == chat_id).first()
     if chat is None:
@@ -32,7 +32,7 @@ def read_chatid(chat_id: int, db: Session = Depends(get_db)):
 
 
 # Ruta para eliminar un chat por su ID
-@router.delete("/{chat_id}", response_model=ChatResponse, dependencies=[Depends(verify_token)])
+@router.delete("/{chat_id}", response_model=ChatResponse)
 def delete_chat(chat_id: int, db: Session = Depends(get_db)):
     chat = db.query(Chat).filter(Chat.id_chat == chat_id).first()  # Usar id_chat para la búsqueda
     if chat is None:
@@ -44,7 +44,7 @@ def delete_chat(chat_id: int, db: Session = Depends(get_db)):
 
 
 # Ruta para actualizar un chat por su ID
-@router.put("/{chat_id}", response_model=ChatResponseUpdate, dependencies=[Depends(verify_token)])
+@router.put("/{chat_id}", response_model=ChatResponseUpdate)
 def update_chat(chat_id: int, chat_update: ChatUpdate, db: Session = Depends(get_db)):
     chat = db.query(Chat).filter(Chat.id_chat == chat_id).first()
     if chat is None:
@@ -57,7 +57,7 @@ def update_chat(chat_id: int, chat_update: ChatUpdate, db: Session = Depends(get
 
 
 # Ruta para obtener todos los chats
-@router.get("/", response_model=List[ChatResponse], dependencies=[Depends(verify_token)])
+@router.get("/", response_model=List[ChatResponse])
 def read_all_chats(db: Session = Depends(get_db)):
     chats = db.query(Chat).all()
     if not chats:

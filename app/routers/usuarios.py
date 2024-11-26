@@ -97,14 +97,14 @@ def login_usuario(
         "access_token": access_token
     }
 
-@router.get("/{usuario_id}", response_model=UsuarioResponse, dependencies=[Depends(verify_token)])
+@router.get("/{usuario_id}", response_model=UsuarioResponse )
 def read_usuario(usuario_id: int, db: Session = Depends(get_db)):
     usuario = db.query(Usuario).filter(Usuario.id_usuario == usuario_id).first()
     if usuario is None:
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
     return usuario
 
-@router.delete("/{usuario_id}", response_model=UsuarioResponse, dependencies=[Depends(verify_token)])
+@router.delete("/{usuario_id}", response_model=UsuarioResponse )
 def delete_usuario(usuario_id: int, db: Session = Depends(get_db)):
     publicaciones = db.query(Publicaciones).filter(Publicaciones.id_publicaciones_usuario == usuario_id).all()
     for pub in publicaciones:
@@ -124,7 +124,7 @@ def delete_usuario(usuario_id: int, db: Session = Depends(get_db)):
     db.commit()
     return usuario
 
-@router.put("/{usuario_id}", response_model=UsuarioResponseUpdate, dependencies=[Depends(verify_token)])
+@router.put("/{usuario_id}", response_model=UsuarioResponseUpdate)
 def update_usuario(
     usuario_id: int,
     nombre_usuario: str = Form(...),
@@ -171,7 +171,7 @@ def update_usuario(
 
 
 
-@router.get("/", response_model=List[UsuarioResponse], dependencies=[Depends(verify_token)])
+@router.get("/", response_model=List[UsuarioResponse])
 def read_all_chats(db: Session = Depends(get_db)):
     chats = db.query(Usuario).all()
     if not chats:

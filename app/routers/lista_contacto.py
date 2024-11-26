@@ -10,7 +10,7 @@ from typing import List
 router = APIRouter()
 
 # Ruta para crear una nueva lista de contactos
-@router.post("/", response_model=ListaContactoResponse, dependencies=[Depends(verify_token)])
+@router.post("/", response_model=ListaContactoResponse)
 def create_listacontacto(listacontacto: ListaContactoCreate, db: Session = Depends(get_db)):
     db_listacontacto = ListaContacto(
         id_usuario=listacontacto.id_usuario,
@@ -22,7 +22,7 @@ def create_listacontacto(listacontacto: ListaContactoCreate, db: Session = Depen
     return db_listacontacto
 
 # Ruta para obtener una lista de contactos por id del usuario
-@router.get("/{id_usuario}", response_model=List[ListaContactoResponse], dependencies=[Depends(verify_token)])
+@router.get("/{id_usuario}", response_model=List[ListaContactoResponse])
 def read_listacontacto(id_usuario: int, db: Session = Depends(get_db)):
     correos = db.query(ListaContacto.usuario_correo).filter(ListaContacto.id_usuario == id_usuario).all()
 
@@ -56,7 +56,7 @@ def read_listacontacto(id_usuario: int, db: Session = Depends(get_db)):
 
 
 # Ruta para eliminar una lista de contactos por su ID
-@router.delete("/{lista_id}", response_model=ListaContactoResponse, dependencies=[Depends(verify_token)])
+@router.delete("/{lista_id}", response_model=ListaContactoResponse)
 def delete_listacontacto(lista_id: int, db: Session = Depends(get_db)):
     listacontacto = db.query(ListaContacto).filter(ListaContacto.idlista == lista_id).first()
     if listacontacto is None:
@@ -68,7 +68,7 @@ def delete_listacontacto(lista_id: int, db: Session = Depends(get_db)):
 
 
 # Ruta para actualizar una lista de contactos por su ID
-@router.put("/{lista_id}", response_model=ListaContactoResponseUpdate, dependencies=[Depends(verify_token)])
+@router.put("/{lista_id}", response_model=ListaContactoResponseUpdate)
 def update_lista(lista_id: int, lista_update: ListaContactoUpdate, db: Session = Depends(get_db)):
     listacontacto = db.query(ListaContacto).filter(ListaContacto.idlista == lista_id).first()
     if listacontacto is None:
@@ -81,7 +81,7 @@ def update_lista(lista_id: int, lista_update: ListaContactoUpdate, db: Session =
     return listacontacto
 
 # Ruta para obtener todas las listas de contactos
-@router.get("/", response_model=List[ListaContactoResponse], dependencies=[Depends(verify_token)])
+@router.get("/", response_model=List[ListaContactoResponse])
 def read_all_listas(db: Session = Depends(get_db)):
     listas = db.query(ListaContacto).all()
     if not listas:

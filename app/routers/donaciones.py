@@ -8,7 +8,7 @@ from typing import List
 
 router = APIRouter()
 
-@router.post("/", response_model=DonacionesResponse, dependencies=[Depends(verify_token)])
+@router.post("/", response_model=DonacionesResponse)
 def create_donaciones(donaciones: DonacionesCreate, db: Session = Depends(get_db)):
     db_donaciones = Donaciones(
         id_donacion_usuario=donaciones.id_donacion_usuario,
@@ -23,14 +23,14 @@ def create_donaciones(donaciones: DonacionesCreate, db: Session = Depends(get_db
     db.refresh(db_donaciones)
     return db_donaciones
 
-@router.get("/{donaciones_id}", response_model=DonacionesResponse, dependencies=[Depends(verify_token)])
+@router.get("/{donaciones_id}", response_model=DonacionesResponse)
 def read_donacionesid(donaciones_id: int, db : Session = Depends(get_db)):
     donaciones = db.query(Donaciones).filter(Donaciones.id_donaciones == donaciones_id).first()
     if donaciones is None:
         raise HTTPException(status_code=404, detail='foro no encontrado')
     return donaciones
 
-@router.get("/donaciones/{donaciones_id}", response_model=List[DonacionesResponse], dependencies=[Depends(verify_token)])
+@router.get("/donaciones/{donaciones_id}", response_model=List[DonacionesResponse])
 def read_donaciones_byID(donaciones_id: int, db: Session = Depends(get_db)):
     donacion = db.query(Donaciones).filter(Donaciones.id_donaciones == donaciones_id).first()
     if donacion is None:
@@ -40,14 +40,14 @@ def read_donaciones_byID(donaciones_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="No se encontraron donaciones relacionadas")
     return donaciones_relacionadas
 
-@router.get("/donaciones_by_user/{usuario_id}", response_model=List[DonacionesResponse], dependencies=[Depends(verify_token)])
+@router.get("/donaciones_by_user/{usuario_id}", response_model=List[DonacionesResponse])
 def read_donaciones_by_user(usuario_id: int, db: Session = Depends(get_db)):
     donacion = db.query(Donaciones).filter(Donaciones.id_donacion_usuario == usuario_id).all()
     if donacion is None:
         raise HTTPException(status_code=404, detail="Donación no encontrada")
     return donacion
 
-@router.delete("/{donaciones_id}", response_model=DonacionesResponse, dependencies=[Depends(verify_token)])
+@router.delete("/{donaciones_id}", response_model=DonacionesResponse)
 def delete_donaciones(donaciones_id: int, db: Session = Depends(get_db)):
     donaciones = db.query(Donaciones).filter(Donaciones.id_donaciones == donaciones_id).first()
     if donaciones is None:
@@ -56,7 +56,7 @@ def delete_donaciones(donaciones_id: int, db: Session = Depends(get_db)):
     db.commit()
     return donaciones
 
-@router.put("/{donaciones_id}", response_model=DonacionesResponseUpdate, dependencies=[Depends(verify_token)])
+@router.put("/{donaciones_id}", response_model=DonacionesResponseUpdate)
 def update_donaciones(donaciones_id: int, donaciones_update: DonacionesUpdate, db: Session = Depends(get_db)):
     donaciones = db.query(Donaciones).filter(Donaciones.id_donaciones == donaciones_id).first()
     if donaciones is None:
@@ -70,7 +70,7 @@ def update_donaciones(donaciones_id: int, donaciones_update: DonacionesUpdate, d
     db.refresh(donaciones)
     return donaciones
 
-@router.get("/", response_model=List[DonacionesResponse], dependencies=[Depends(verify_token)])
+@router.get("/", response_model=List[DonacionesResponse])
 def read_all_chats(db: Session = Depends(get_db)):
     chats = db.query(Donaciones).all()
     if not chats:

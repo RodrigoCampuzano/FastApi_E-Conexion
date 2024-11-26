@@ -9,7 +9,7 @@ from sqlalchemy import text
 
 router = APIRouter()
 
-@router.post("/", response_model=EventoResponse, dependencies=[Depends(verify_token)])
+@router.post("/", response_model=EventoResponse)
 def create_evento(evento: EventoCreate, db: Session = Depends(get_db)):
     db_evento = Eventos(
         id_evento_usuario=evento.id_evento_usuario,
@@ -29,7 +29,7 @@ def create_evento(evento: EventoCreate, db: Session = Depends(get_db)):
     db.refresh(db_evento)
     return db_evento
 
-@router.get("/{evento_id}", response_model=EventoResponse, dependencies=[Depends(verify_token)])
+@router.get("/{evento_id}", response_model=EventoResponse)
 def read_evento(evento_id: int, db: Session = Depends(get_db)):
     evento = db.query(Eventos).filter(Eventos.id_eventos == evento_id).first()
     if evento is None:
@@ -38,7 +38,7 @@ def read_evento(evento_id: int, db: Session = Depends(get_db)):
     db.commit()
     return evento
 
-@router.get("/eventos/{evento_id}", response_model=List[EventoResponse], dependencies=[Depends(verify_token)])
+@router.get("/eventos/{evento_id}", response_model=List[EventoResponse])
 def read_eventos_by_user(evento_id: int, db: Session = Depends(get_db)):
     evento = db.query(Eventos).filter(Eventos.id_evento_usuario == evento_id).first()
 
@@ -55,7 +55,7 @@ def read_eventos_by_user(evento_id: int, db: Session = Depends(get_db)):
 
     return eventos_relacionados
 
-@router.delete("/{evento_id}", response_model=EventoResponse, dependencies=[Depends(verify_token)])
+@router.delete("/{evento_id}", response_model=EventoResponse)
 def delete_evento(evento_id: int, db: Session = Depends(get_db)):
     evento = db.query(Eventos).filter(Eventos.id_eventos == evento_id).first()
     if evento is None:
@@ -66,7 +66,7 @@ def delete_evento(evento_id: int, db: Session = Depends(get_db)):
     db.commit()
     return evento
 
-@router.put("/{evento_id}", response_model=EventoResponseUpdate, dependencies=[Depends(verify_token)])
+@router.put("/{evento_id}", response_model=EventoResponseUpdate)
 def update_evento(evento_id: int, evento_update: EventoUpdate, db: Session = Depends(get_db)):
     evento = db.query(Eventos).filter(Eventos.id_eventos == evento_id).first()
 
@@ -99,7 +99,7 @@ def update_evento(evento_id: int, evento_update: EventoUpdate, db: Session = Dep
     return evento
 
 
-@router.get("/", response_model=List[EventoResponse], dependencies=[Depends(verify_token)])
+@router.get("/", response_model=List[EventoResponse])
 def read_all_eventos(db: Session = Depends(get_db)):
     eventos = db.query(Eventos).options(joinedload(Eventos.usuario),joinedload(Eventos.organizador)).all()
 

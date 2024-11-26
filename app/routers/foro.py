@@ -9,7 +9,7 @@ from typing import List
 router = APIRouter()
 
 # Ruta para crear un foro
-@router.post("/", response_model=ForoResponse, dependencies=[Depends(verify_token)])
+@router.post("/", response_model=ForoResponse)
 def create_foro(foro: ForoCreate, db: Session = Depends(get_db)):
     db_foro = Foro(
         id_chat=foro.id_chat,  
@@ -23,7 +23,7 @@ def create_foro(foro: ForoCreate, db: Session = Depends(get_db)):
     return db_foro
 
 # Ruta para leer un foro por su ID
-@router.get("chat/{chat_id}", response_model=ForoResponse, dependencies=[Depends(verify_token)])
+@router.get("chat/{chat_id}", response_model=ForoResponse)
 def read_foro_chatid(chat_id: int, db: Session = Depends(get_db)):
     foro = db.query(Foro).filter(Foro.id_chat == chat_id).first()
     if foro is None:
@@ -31,7 +31,7 @@ def read_foro_chatid(chat_id: int, db: Session = Depends(get_db)):
     return foro
 
 # Ruta para eliminar un foro por su ID
-@router.delete("/{foro_id}", response_model=ForoResponse, dependencies=[Depends(verify_token)])
+@router.delete("/{foro_id}", response_model=ForoResponse)
 def delete_foro(foro_id: int, db: Session = Depends(get_db)):
     foro = db.query(Foro).filter(Foro.id_foro == foro_id).first()
     if foro is None:
@@ -42,7 +42,7 @@ def delete_foro(foro_id: int, db: Session = Depends(get_db)):
     return foro
 
 # Ruta para actualizar un foro por su ID
-@router.put("/{foro_id}", response_model=ForoResponseUpdate, dependencies=[Depends(verify_token)])
+@router.put("/{foro_id}", response_model=ForoResponseUpdate)
 def update_foro(foro_id: int, foro_update: ForoUpdate, db: Session = Depends(get_db)):
     foro = db.query(Foro).filter(Foro.id_foro == foro_id).first()
     if foro is None:
@@ -55,7 +55,7 @@ def update_foro(foro_id: int, foro_update: ForoUpdate, db: Session = Depends(get
     return foro
 
 # Ruta para obtener todos los foros
-@router.get("/", response_model=List[ForoResponse], dependencies=[Depends(verify_token)])
+@router.get("/", response_model=List[ForoResponse])
 def read_all_foros(db: Session = Depends(get_db)):
     foros = db.query(Foro).all()
     if not foros:
@@ -63,7 +63,7 @@ def read_all_foros(db: Session = Depends(get_db)):
     return foros
 
 
-@router.get("foro/{foro_id}", response_model=ForoResponse, dependencies=[Depends(verify_token)])
+@router.get("foro/{foro_id}", response_model=ForoResponse)
 def read_foroid(foro_id: int, db: Session = Depends(get_db)):
     forochat = db.query(Foro).filter(Foro.id_foro == foro_id).first()
     if forochat is None:

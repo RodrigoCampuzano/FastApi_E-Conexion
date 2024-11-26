@@ -14,7 +14,7 @@ router = APIRouter()
 UPLOAD_DIRECTORY = "uploads/publicaciones"
 os.makedirs(UPLOAD_DIRECTORY, exist_ok=True)
 
-@router.post("/", response_model=PublicacionesResponse, dependencies=[Depends(verify_token)])
+@router.post("/", response_model=PublicacionesResponse )
 def create_publicacion(
     id_publicaciones_usuario: int = Form(...),
     descripcion: str = Form(...),
@@ -46,7 +46,7 @@ def create_publicacion(
     
     return db_publicacion
 
-@router.delete("/{publicacion_id}", response_model=PublicacionesResponse, dependencies=[Depends(verify_token)])
+@router.delete("/{publicacion_id}", response_model=PublicacionesResponse)
 def delete_publicacion(publicacion_id: int, db: Session = Depends(get_db)):
     publicacion = db.query(Publicaciones).filter(Publicaciones.id_publicaciones == publicacion_id).first()
     if publicacion is None:
@@ -56,7 +56,7 @@ def delete_publicacion(publicacion_id: int, db: Session = Depends(get_db)):
     db.commit()
     return publicacion
 
-@router.put("/{publicacion_id}", response_model=PublicacionesResponseUpdate, dependencies=[Depends(verify_token)])
+@router.put("/{publicacion_id}", response_model=PublicacionesResponseUpdate )
 def update_publicacion(
     publicacion_id: int,
     titulo: str = Form(None),
@@ -90,7 +90,7 @@ def update_publicacion(
     return publicacion
 
 
-@router.get("/", response_model=List[PublicacionesResponseconUsuario], dependencies=[Depends(verify_token)])
+@router.get("/", response_model=List[PublicacionesResponseconUsuario] )
 def read_all_chats(db: Session = Depends(get_db)):
     publicaciones = (
         db.query(Publicaciones)
@@ -114,7 +114,7 @@ def read_all_chats(db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="No publicaciones encontradas")
     return result
 
-@router.get("/{id_usuario}", response_model=List[PublicacionesResponseconUsuario], dependencies=[Depends(verify_token)])
+@router.get("/{id_usuario}", response_model=List[PublicacionesResponseconUsuario])
 def read_publicaciones_by_user(id_usuario: int, db: Session = Depends(get_db)):
     publicacion = db.query(Publicaciones).options(joinedload(Publicaciones.usuario)).filter(Publicaciones.id_publicaciones_usuario == id_usuario).first()
     if publicacion is None:
@@ -138,7 +138,7 @@ def read_publicaciones_by_user(id_usuario: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="No se encontraron publicaciones relacionadas")    
     return result
 
-@router.get("/publicacionById/{publicacion_id}", response_model = PublicacionesResponse, dependencies=[Depends(verify_token)])
+@router.get("/publicacionById/{publicacion_id}", response_model = PublicacionesResponse )
 def     read_publicacion_by_id(publicacion_id: int, db: Session =  Depends(get_db)):
         publicacion = db.query(Publicaciones).filter(Publicaciones.id_publicaciones == publicacion_id).first()
         if publicacion is None:
