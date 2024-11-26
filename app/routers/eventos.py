@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session, joinedload
-from app.db.dependencies import get_db
+from app.db.dependencies import get_db, get_current_user
+from app.models.Usuarios import Usuario
 from app.models.Eventos import Eventos
 from app.schemas.eventos import EventoCreate, EventoResponse, EventoUpdate, EventoResponseUpdate
 from typing import List
@@ -9,7 +10,7 @@ from sqlalchemy import text
 router = APIRouter()
 
 @router.post("/", response_model=EventoResponse)
-def create_evento(evento: EventoCreate, db: Session = Depends(get_db)):
+def create_evento(evento: EventoCreate, db: Session = Depends(get_db), current_user: Usuario = Depends(get_current_user)):
     db_evento = Eventos(
         id_evento_usuario=evento.id_evento_usuario,
         id_organizador=evento.id_organizador,
@@ -29,7 +30,7 @@ def create_evento(evento: EventoCreate, db: Session = Depends(get_db)):
     return db_evento
 
 @router.get("/{evento_id}", response_model=EventoResponse)
-def read_evento(evento_id: int, db: Session = Depends(get_db)):
+def read_evento(evento_id: int, db: Session = Depends(get_db),current_user: Usuario = Depends(get_current_user)):
     evento = db.query(Eventos).filter(Eventos.id_eventos == evento_id).first()
     if evento is None:
         raise HTTPException(status_code=404, detail="Evento no encontrado")
@@ -38,7 +39,7 @@ def read_evento(evento_id: int, db: Session = Depends(get_db)):
     return evento
 
 @router.get("/eventos/{evento_id}", response_model=List[EventoResponse])
-def read_eventos_by_user(evento_id: int, db: Session = Depends(get_db)):
+def read_eventos_by_user(evento_id: int, db: Session = Depends(get_db), current_user: Usuario = Depends(get_current_user)):
     evento = db.query(Eventos).filter(Eventos.id_evento_usuario == evento_id).first()
 
     if evento is None:
@@ -55,7 +56,7 @@ def read_eventos_by_user(evento_id: int, db: Session = Depends(get_db)):
     return eventos_relacionados
 
 @router.delete("/{evento_id}", response_model=EventoResponse)
-def delete_evento(evento_id: int, db: Session = Depends(get_db)):
+def delete_evento(evento_id: int, db: Session = Depends(get_db), current_user: Usuario = Depends(get_current_user)):
     evento = db.query(Eventos).filter(Eventos.id_eventos == evento_id).first()
     if evento is None:
         raise HTTPException(status_code=404, detail="Evento no encontrado")
@@ -66,7 +67,7 @@ def delete_evento(evento_id: int, db: Session = Depends(get_db)):
     return evento
 
 @router.put("/{evento_id}", response_model=EventoResponseUpdate)
-def update_evento(evento_id: int, evento_update: EventoUpdate, db: Session = Depends(get_db)):
+def update_evento(evento_id: int, evento_update: EventoUpdate, db: Session = Depends(get_db0), current_user: Usuario = Depends(get_current_user)):
     evento = db.query(Eventos).filter(Eventos.id_eventos == evento_id).first()
 
     if evento is None:
@@ -99,7 +100,7 @@ def update_evento(evento_id: int, evento_update: EventoUpdate, db: Session = Dep
 
 
 @router.get("/", response_model=List[EventoResponse])
-def read_all_eventos(db: Session = Depends(get_db)):
+def read_all_eventos(db: Session = Depends(get_db), current_user: Usuario = Depends(get_current_user)):
     eventos = db.query(Eventos).options(joinedload(Eventos.usuario),joinedload(Eventos.organizador)).all()
 
     if not eventos:

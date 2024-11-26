@@ -2,7 +2,7 @@ import jwt
 from fastapi import APIRouter, Depends, HTTPException, File, UploadFile, Form
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
-from app.db.dependencies import get_db
+from app.db.dependencies import get_db, get_current_user
 from app.models.Usuarios import Usuario
 from app.models.Publicaciones import Publicaciones
 from app.models.Lista_contacto import ListaContacto
@@ -41,7 +41,8 @@ def register_usuario(
     estatus: str = Form(...),
     file: UploadFile = File(None),
     descripcion: str = Form(...),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: Usuario = Depends(get_current_user)
 ):
     existing_user = db.query(Usuario).filter(Usuario.correo_usuario == correo_usuario).first()
     if existing_user:
@@ -80,7 +81,8 @@ def register_usuario(
 def login_usuario(
     correo_usuario: str = Form(...),
     contrasena_usuario: str = Form(...),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: Usuario = Depends(get_current_user)
 ):
     usuario = db.query(Usuario).filter(Usuario.correo_usuario == correo_usuario).first()
     if not usuario:
@@ -97,14 +99,14 @@ def login_usuario(
     }
 
 @router.get("/{usuario_id}", response_model=UsuarioResponse)
-def read_usuario(usuario_id: int, db: Session = Depends(get_db)):
+def read_usuario(usuario_id: int, db: Session = Depends(get_db), current_user: Usuario = Depends(get_current_user)):
     usuario = db.query(Usuario).filter(Usuario.id_usuario == usuario_id).first()
     if usuario is None:
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
     return usuario
 
 @router.delete("/{usuario_id}", response_model=UsuarioResponse)
-def delete_usuario(usuario_id: int, db: Session = Depends(get_db)):
+def delete_usuario(usuario_id: int, db: Session = Depends(get_db), current_user: Usuario = Depends(get_current_user)):
     publicaciones = db.query(Publicaciones).filter(Publicaciones.id_publicaciones_usuario == usuario_id).all()
     for pub in publicaciones:
         db.delete(pub)
@@ -135,6 +137,7 @@ def update_usuario(
     file: UploadFile = File(None),
     descripcion: str = Form(...),
     db: Session = Depends(get_db),
+    current_user: Usuario = Depends(get_current_user)
 ):
     usuario = db.query(Usuario).filter(Usuario.id_usuario == usuario_id).first()
     if not usuario:
@@ -171,7 +174,7 @@ def update_usuario(
 
 
 @router.get("/", response_model=List[UsuarioResponse])
-def read_all_chats(db: Session = Depends(get_db)):
+def read_all_chats(db: Session = Depends(get_db), current_user: Usuario = Depends(get_current_user)):
     chats = db.query(Usuario).all()
     if not chats:
         raise HTTPException(status_code=404, detail="No chats found")

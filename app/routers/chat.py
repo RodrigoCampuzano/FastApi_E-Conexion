@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from app.db.dependencies import get_db
+from app.db.dependencies import get_db, get_current_user
+from app.models.Usuarios import Usuario
 from app.schemas.chat import ChatResponse, ChatCreate, ChatUpdate, ChatResponseUpdate
 from app.models.Chat import Chat
 from typing import List
