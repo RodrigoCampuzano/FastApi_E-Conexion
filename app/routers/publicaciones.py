@@ -1,8 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, File, UploadFile, Form, FastAPI
 from sqlalchemy.orm import Session, joinedload
-from app.db.dependencies import get_db, get_current_user
+from app.db.dependencies import get_db
 from app.models.Publicaciones import Publicaciones
-from app.models.Usuarios import Usuario
 from app.schemas.publicaciones import PublicacionesCreate, PublicacionesResponse, PublicacionesUpdate, PublicacionesResponseUpdate, PublicacionesResponseconUsuario
 from typing import List
 import os
@@ -21,8 +20,7 @@ def create_publicacion(
     fecha: str = Form(...),
     titulo: str = Form(...),
     file: UploadFile = File(None),
-    db: Session = Depends(get_db),
-    current_user: Usuario = Depends(get_current_user)
+    db: Session = Depends(get_db)
 ):
     if file:
         if not file.filename.endswith(('.png', '.jpg', '.jpeg')):
@@ -48,7 +46,7 @@ def create_publicacion(
     return db_publicacion
 
 @router.delete("/{publicacion_id}", response_model=PublicacionesResponse)
-def delete_publicacion(publicacion_id: int, db: Session = Depends(get_db), current_user: Usuario = Depends(get_current_user)):
+def delete_publicacion(publicacion_id: int, db: Session = Depends(get_db)):
     publicacion = db.query(Publicaciones).filter(Publicaciones.id_publicaciones == publicacion_id).first()
     if publicacion is None:
         raise HTTPException(status_code=404, detail="Publicación no encontrada")
@@ -92,7 +90,7 @@ def update_publicacion(
 
 
 @router.get("/", response_model=List[PublicacionesResponseconUsuario])
-def read_all_chats(db: Session = Depends(get_db), current_user: Usuario = Depends(get_current_user)):
+def read_all_chats(db: Session = Depends(get_db)):
     publicaciones = (
         db.query(Publicaciones)
         .options(joinedload(Publicaciones.usuario)) 
@@ -116,7 +114,7 @@ def read_all_chats(db: Session = Depends(get_db), current_user: Usuario = Depend
     return result
 
 @router.get("/{id_usuario}", response_model=List[PublicacionesResponseconUsuario])
-def read_publicaciones_by_user(id_usuario: int, db: Session = Depends(get_db),current_user: Usuario = Depends(get_current_user)):
+def read_publicaciones_by_user(id_usuario: int, db: Session = Depends(get_db)):
     publicacion = db.query(Publicaciones).options(joinedload(Publicaciones.usuario)).filter(Publicaciones.id_publicaciones_usuario == id_usuario).first()
     if publicacion is None:
         raise HTTPException(status_code=404, detail="Publicación no encontrada")
@@ -140,7 +138,7 @@ def read_publicaciones_by_user(id_usuario: int, db: Session = Depends(get_db),cu
     return result
 
 @router.get("/publicacionById/{publicacion_id}", response_model = PublicacionesResponse)
-def     read_publicacion_by_id(publicacion_id: int, db: Session =  Depends(get_db), current_user: Usuario = Depends(get_current_user)):
+def     read_publicacion_by_id(publicacion_id: int, db: Session =  Depends(get_db)):
         publicacion = db.query(Publicaciones).filter(Publicaciones.id_publicaciones == publicacion_id).first()
         if publicacion is None:
                 raise HTTPException(status_code = 404, detail= "Publicaion no encontrada")

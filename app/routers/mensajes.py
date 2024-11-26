@@ -1,8 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from app.db.dependencies import get_db, get_current_user
+from app.db.dependencies import get_db
 from app.models.Mensajes import Mensajes
-from app.models.Usuarios import Usuario
 from app.schemas.mensajes import MensajesCreate, MensajesResponse, MensajeUpdate, MensajesResponseUpdate
 from typing import List
 
@@ -10,7 +9,7 @@ router = APIRouter()
 
 # Ruta para crear un mensaje
 @router.post("/", response_model=MensajesResponse)
-def create_mensaje(mensaje: MensajesCreate, db: Session = Depends(get_db), current_user: Usuario = Depends(get_current_user)):
+def create_mensaje(mensaje: MensajesCreate, db: Session = Depends(get_db)):
     db_mensaje = Mensajes(
         id_chat=mensaje.id_chat,
         fecha=mensaje.fecha,
@@ -25,7 +24,7 @@ def create_mensaje(mensaje: MensajesCreate, db: Session = Depends(get_db), curre
 
 # Ruta para obtener un mensaje por su ID
 @router.get("/{mensaje_id}", response_model=MensajesResponse)
-def read_mensaje(mensaje_id: int, db: Session = Depends(get_db), current_user: Usuario = Depends(get_current_user)):
+def read_mensaje(mensaje_id: int, db: Session = Depends(get_db)):
     mensaje = db.query(Mensajes).filter(Mensajes.id_mensaje == mensaje_id).first()
     if mensaje is None:
         raise HTTPException(status_code=404, detail="Mensaje no encontrado")
@@ -33,7 +32,7 @@ def read_mensaje(mensaje_id: int, db: Session = Depends(get_db), current_user: U
 
 # Ruta para obtener mensajes por ID de usuario
 @router.get("/mensajes/{mensaje_id}", response_model=List[MensajesResponse])
-def read_mensajes_by_user(mensaje_id: int, db: Session = Depends(get_db), current_user: Usuario = Depends(get_current_user)):
+def read_mensajes_by_user(mensaje_id: int, db: Session = Depends(get_db)):
     mensajes_relacionados = (db.query(Mensajes).filter(Mensajes.id_emisor == mensaje_id).all())
     if not mensajes_relacionados:
         raise HTTPException(status_code=404, detail="No se encontraron mensajes relacionados")
@@ -42,7 +41,7 @@ def read_mensajes_by_user(mensaje_id: int, db: Session = Depends(get_db), curren
 
 # Ruta para obtener mensajes por ID de chat
 @router.get("/mensajeschat_byID/{chat_id}", response_model=List[MensajesResponse])
-def read_mensajeschat_byID(chat_id: int, db: Session = Depends(get_db), current_user: Usuario = Depends(get_current_user)):
+def read_mensajeschat_byID(chat_id: int, db: Session = Depends(get_db)):
     mensajes_relacionados = (db.query(Mensajes).filter(Mensajes.id_chat == chat_id).all())
     if not mensajes_relacionados:
         raise HTTPException(status_code=404, detail="No se encontraron mensajes relacionados")
