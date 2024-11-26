@@ -67,7 +67,7 @@ def delete_evento(evento_id: int, db: Session = Depends(get_db), current_user: U
     return evento
 
 @router.put("/{evento_id}", response_model=EventoResponseUpdate)
-def update_evento(evento_id: int, evento_update: EventoUpdate, db: Session = Depends(get_db0), current_user: Usuario = Depends(get_current_user)):
+def update_evento(evento_id: int, evento_update: EventoUpdate, db: Session = Depends(get_db), current_user: Usuario = Depends(get_current_user)):
     evento = db.query(Eventos).filter(Eventos.id_eventos == evento_id).first()
 
     if evento is None:

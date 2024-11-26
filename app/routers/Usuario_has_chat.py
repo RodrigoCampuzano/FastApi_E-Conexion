@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
-from app.db.dependencies import get_db, get_current_user
+from app.db.dependencies import get_current_user, get_db
 from app.models.Usuario_has_chat import UsuarioHasChat
 from app.models.Usuarios import Usuario
 from app.schemas.usuario_has_chat import UsuarioHasChatCreate, UsuarioHasChatResponse, UsuarioHasChatUpdate
