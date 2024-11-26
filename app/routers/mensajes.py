@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.db.dependencies import get_db
+from app.db.auth import verify_token
 from app.models.Mensajes import Mensajes
 from app.schemas.mensajes import MensajesCreate, MensajesResponse, MensajeUpdate, MensajesResponseUpdate
 from typing import List
@@ -8,7 +9,7 @@ from typing import List
 router = APIRouter()
 
 # Ruta para crear un mensaje
-@router.post("/", response_model=MensajesResponse)
+@router.post("/", response_model=MensajesResponse, dependencies=[Depends(verify_token)])
 def create_mensaje(mensaje: MensajesCreate, db: Session = Depends(get_db)):
     db_mensaje = Mensajes(
         id_chat=mensaje.id_chat,
@@ -23,7 +24,7 @@ def create_mensaje(mensaje: MensajesCreate, db: Session = Depends(get_db)):
     return MensajesResponse.from_orm(db_mensaje)
 
 # Ruta para obtener un mensaje por su ID
-@router.get("/{mensaje_id}", response_model=MensajesResponse)
+@router.get("/{mensaje_id}", response_model=MensajesResponse, dependencies=[Depends(verify_token)])
 def read_mensaje(mensaje_id: int, db: Session = Depends(get_db)):
     mensaje = db.query(Mensajes).filter(Mensajes.id_mensaje == mensaje_id).first()
     if mensaje is None:
@@ -31,7 +32,7 @@ def read_mensaje(mensaje_id: int, db: Session = Depends(get_db)):
     return mensaje
 
 # Ruta para obtener mensajes por ID de usuario
-@router.get("/mensajes/{mensaje_id}", response_model=List[MensajesResponse])
+@router.get("/mensajes/{mensaje_id}", response_model=List[MensajesResponse], dependencies=[Depends(verify_token)])
 def read_mensajes_by_user(mensaje_id: int, db: Session = Depends(get_db)):
     mensajes_relacionados = (db.query(Mensajes).filter(Mensajes.id_emisor == mensaje_id).all())
     if not mensajes_relacionados:
@@ -40,7 +41,7 @@ def read_mensajes_by_user(mensaje_id: int, db: Session = Depends(get_db)):
     return mensajes_relacionados
 
 # Ruta para obtener mensajes por ID de chat
-@router.get("/mensajeschat_byID/{chat_id}", response_model=List[MensajesResponse])
+@router.get("/mensajeschat_byID/{chat_id}", response_model=List[MensajesResponse], dependencies=[Depends(verify_token)])
 def read_mensajeschat_byID(chat_id: int, db: Session = Depends(get_db)):
     mensajes_relacionados = (db.query(Mensajes).filter(Mensajes.id_chat == chat_id).all())
     if not mensajes_relacionados:
@@ -51,7 +52,7 @@ def read_mensajeschat_byID(chat_id: int, db: Session = Depends(get_db)):
 
 
 # Ruta para eliminar un mensaje por su ID
-@router.delete("/{mensaje_id}", response_model=MensajesResponse)
+@router.delete("/{mensaje_id}", response_model=MensajesResponse, dependencies=[Depends(verify_token)])
 def delete_mensaje(mensaje_id: int, db: Session = Depends(get_db)):
     mensaje = db.query(Mensajes).filter(Mensajes.id_mensaje == mensaje_id).first()
     if mensaje is None:
@@ -62,7 +63,7 @@ def delete_mensaje(mensaje_id: int, db: Session = Depends(get_db)):
     return mensaje
 
 # Ruta para actualizar un mensaje por su ID
-@router.put("/{mensaje_id}", response_model=MensajesResponseUpdate)
+@router.put("/{mensaje_id}", response_model=MensajesResponseUpdate, dependencies=[Depends(verify_token)])
 def update_mensaje(mensaje_id: int, mensaje_update: MensajeUpdate, db: Session = Depends(get_db)):
     mensaje = db.query(Mensajes).filter(Mensajes.id_mensaje == mensaje_id).first()
     if mensaje is None:
@@ -74,7 +75,7 @@ def update_mensaje(mensaje_id: int, mensaje_update: MensajeUpdate, db: Session =
     return MensajesResponseUpdate.from_orm(mensaje)
 
 # Ruta para obtener todos los mensajes
-@router.get("/", response_model=List[MensajesResponse])
+@router.get("/", response_model=List[MensajesResponse], dependencies=[Depends(verify_token)])
 def read_all_mensajes(db: Session = Depends(get_db)):
     mensajes = db.query(Mensajes).all()
     if not mensajes:
