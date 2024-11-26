@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from datetime import datetime
+from typing import Optional
 
 class PublicacionesBase(BaseModel):
     id_publicaciones_usuario: int
@@ -15,9 +16,9 @@ class PublicacionesResponse(PublicacionesBase):
         from_attributes = True
     
 class PublicacionesUpdate(BaseModel):
-    imagen: str
-    descripcion: str
-    titulo: str
+    imagen: Optional[str] = None
+    descripcion: Optional[str]= None
+    titulo: Optional[str] = None
     
 class PublicacionesCreate(PublicacionesBase):
     pass

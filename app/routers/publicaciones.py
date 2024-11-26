@@ -62,25 +62,31 @@ def update_publicacion(
     file: UploadFile = File(None),
     db: Session = Depends(get_db)
 ):
+    # Buscar la publicación en la base de datos
     publicacion = db.query(Publicaciones).filter(Publicaciones.id_publicaciones == publicacion_id).first()
     if publicacion is None:
         raise HTTPException(status_code=404, detail="Publicación no encontrada")
     
+    # Actualizar la imagen si se proporciona un archivo
     if file:
         if publicacion.imagen and os.path.exists(publicacion.imagen):
             os.remove(publicacion.imagen)
-    
+        
         new_file_path = f"{UPLOAD_DIRECTORY}/{file.filename}"
         with open(new_file_path, "wb") as f:
             shutil.copyfileobj(file.file, f)
         
         publicacion.imagen = f"http://34.197.52.229:8000/uploads/publicaciones/{file.filename}"
     
-    publicacion.descripcion = publicacion_update.descripcion
-    publicacion.titulo = publicacion_update.titulo
+    if publicacion_update.descripcion is not None:
+        publicacion.descripcion = publicacion_update.descripcion
+    
+    if publicacion_update.titulo is not None:
+        publicacion.titulo = publicacion_update.titulo
     
     db.commit()
     db.refresh(publicacion)
+    
     return publicacion
 
 

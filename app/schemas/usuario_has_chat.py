@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from datetime import datetime
+
 
 class UsuarioHasChatBase(BaseModel):
     usuario_idusuario: int
