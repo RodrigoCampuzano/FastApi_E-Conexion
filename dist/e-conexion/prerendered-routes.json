@@ -1,0 +1,22 @@
+{
+  "routes": [
+    "/login",
+    "/red",
+    "/red/actualizar_perfil",
+    "/red/chats",
+    "/red/chats/contactos",
+    "/red/Donaciones",
+    "/red/Donaciones/donacionesform",
+    "/red/eventos",
+    "/red/eventos/formeventos",
+    "/red/eventos/miseventos",
+    "/red/foros",
+    "/red/foros/formforos",
+    "/red/foros/misforos",
+    "/red/perfil",
+    "/red/publicaciones",
+    "/red/publicaciones/formpublicacion",
+    "/red/publicaciones/misPublicaciones",
+    "/registro"
+  ]
+}
